@@ -127,6 +127,8 @@ let sealedBox = try AES.GCM.seal(plaintext, using: symmetricKey)
 // AES.GCM.seal(data, using: seSigningKey) — TYPE MISMATCH (needs SymmetricKey)
 ```
 
+> The ECDH + HKDF pattern is covered in full — including curve selection, `info` parameter guidance, and output key length — in `cryptokit-public-key.md` § Key Agreement with HKDF Derivation.
+
 ---
 
 ## Persisting SE keys via dataRepresentation

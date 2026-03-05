@@ -421,6 +421,8 @@ let sealed = try AES.GCM.seal(data, using: key, nonce: nonce)
 
 ## kSecAttrAccessible Selection Guide
 
+> Complete selection criteria and data protection tier mapping: `keychain-access-control.md` § The "When" Layer: Seven Accessibility Constants. The guidance below is a compliance-focused quick-reference for audit contexts.
+
 Keychain accessibility is the single most important iOS security decision — it simultaneously addresses M1, M3, M9, and M10 requirements.
 
 | Constant                                           | Backup | iCloud | Passcode Required       | Use For                                               |
