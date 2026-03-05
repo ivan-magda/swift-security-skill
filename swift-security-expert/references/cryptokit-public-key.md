@@ -61,7 +61,7 @@ On Apple Silicon, both P256 and Curve25519 are heavily optimized in corecrypto w
 
 CryptoKit's most important design decision is splitting each curve into two non-interchangeable type families: `Signing` and `KeyAgreement`. A `P256.Signing.PrivateKey` cannot perform key agreement. A `Curve25519.KeyAgreement.PrivateKey` cannot sign. The compiler enforces this at build time. AI generators frequently conflate these, producing code that fails to compile.
 
-### Correct: P256 key generation, signing, and verification
+### ✅ Correct: P256 key generation, signing, and verification
 
 ```swift
 import CryptoKit
@@ -86,7 +86,7 @@ let restored = try P256.Signing.ECDSASignature(derRepresentation: derSig)
 
 For pre-hashed data (when the digest is computed externally), use `signature(for:)` with a `Digest` parameter or the `SHA256Digest` directly.
 
-### Wrong: Mixing signing and key agreement key types
+### ❌ Wrong: Mixing signing and key agreement key types
 
 ```swift
 // This will NOT compile — signing keys cannot do key agreement
@@ -103,7 +103,7 @@ let shared = try key.sharedSecretFromKeyAgreement(with: otherPublicKey)
 
 The `SharedSecret` produced by ECDH is not uniformly distributed and must never be used directly as an encryption key. CryptoKit enforces this — `SharedSecret` is not directly convertible to `SymmetricKey`. The only sanctioned paths are `.hkdfDerivedSymmetricKey()` or `.x963DerivedSymmetricKey()`. Apple's documentation states explicitly: "The shared secret isn't suitable as a symmetric cryptographic key by itself."
 
-### Correct: Curve25519 key agreement with HKDF derivation
+### ✅ Correct: Curve25519 key agreement with HKDF derivation
 
 ```swift
 import CryptoKit
@@ -131,7 +131,7 @@ let sealed = try ChaChaPoly.seal(plaintext, using: symmetricKey)
 
 The `sharedInfo` parameter serves as protocol binding — it ensures keys derived for different purposes within the same application cannot be confused. Use distinct `sharedInfo` values for encryption keys vs authentication keys when deriving multiple subkeys.
 
-### Wrong: Using SharedSecret directly as an encryption key
+### ❌ Wrong: Using SharedSecret directly as an encryption key
 
 ```swift
 // NEVER DO THIS — SharedSecret is not uniformly distributed
@@ -165,7 +165,7 @@ Before iOS 17, encrypting data for a recipient's public key required manually im
 
 Custom suites can be constructed: `HPKE.Ciphersuite(kem: .P521_HKDF_SHA512, kdf: .HKDF_SHA512, aead: .AES_GCM_256)`.
 
-### Correct: HPKE encryption and decryption
+### ✅ Correct: HPKE encryption and decryption
 
 ```swift
 import CryptoKit
@@ -231,7 +231,7 @@ Five new types join CryptoKit, all backed by formally verified implementations p
 
 The size cost of quantum resistance is substantial — an ML-DSA-65 signature is 3,309 bytes versus 64 bytes for Ed25519; an ML-KEM-768 public key is 1,184 bytes versus 32 bytes for X25519. But computational performance is competitive with classical algorithms.
 
-### Correct: ML-KEM-768 key encapsulation
+### ✅ Correct: ML-KEM-768 key encapsulation
 
 Key encapsulation differs fundamentally from Diffie-Hellman key agreement. In ECDH, both parties contribute public keys. In KEM, only the recipient has a key pair — the sender calls `encapsulate()` on the public key, which produces both a shared secret and an opaque ciphertext that only the private key can decapsulate.
 
@@ -256,7 +256,7 @@ if #available(iOS 26, macOS 26, *) {
 }
 ```
 
-### Correct: ML-DSA-65 signing
+### ✅ Correct: ML-DSA-65 signing
 
 ```swift
 if #available(iOS 26, macOS 26, *) {
@@ -273,7 +273,7 @@ if #available(iOS 26, macOS 26, *) {
 }
 ```
 
-### Correct: Hybrid post-quantum with HPKE (recommended migration path)
+### ✅ Correct: Hybrid post-quantum with HPKE (recommended migration path)
 
 Apple's recommended approach for custom protocols is to switch the HPKE cipher suite to X-Wing, which combines ML-KEM-768 with X25519 so that both algorithms must be broken to compromise the exchange:
 
@@ -293,7 +293,7 @@ if #available(iOS 26, macOS 26, *) {
 }
 ```
 
-### Correct: Hybrid signing (ML-DSA + ECDSA) for transition period
+### ✅ Correct: Hybrid signing (ML-DSA + ECDSA) for transition period
 
 For signatures, Apple demonstrates hybrid signatures at the application level — concatenating ML-DSA and ECDSA signatures and verifying both:
 
@@ -321,7 +321,7 @@ if #available(iOS 26, macOS 26, *) {
 
 CryptoKit's PEM support uses PKCS#8 for private keys (`-----BEGIN PRIVATE KEY-----`) and X.509 SubjectPublicKeyInfo for public keys (`-----BEGIN PUBLIC KEY-----`). Import also accepts SEC 1 format (`-----BEGIN EC PRIVATE KEY-----`). This enables interoperability with OpenSSL, BoringSSL, and server-side TLS libraries.
 
-### Correct: PEM key export and import
+### ✅ Correct: PEM key export and import
 
 ```swift
 // Generate and export
@@ -386,7 +386,7 @@ For classical curves, only P256 works with the Secure Enclave. On iOS 26, the Se
 
 CryptoKit does not include RSA at all. RSA requires dropping down to the Security framework's C-based `SecKey` API, which lacks type safety, automatic memory management, and modern Swift ergonomics.
 
-### Wrong: RSA when EC is available
+### ❌ Wrong: RSA when EC is available
 
 ```swift
 // Don't do this for new code — Security framework RSA
