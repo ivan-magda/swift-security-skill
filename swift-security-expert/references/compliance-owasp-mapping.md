@@ -376,24 +376,19 @@ print("Password entered: \(password)")
 
 ### Compliant: CryptoKit encryption
 
+Canonical full round-trip patterns are in `cryptokit-symmetric.md` and anti-pattern #6 in `common-anti-patterns.md`. This compliance snippet stays minimal to avoid duplicating canonical crypto guidance.
+
 ```swift
 import CryptoKit
 
-/// AES-256-GCM encryption with automatic nonce generation.
-/// Compliance: OWASP M10 (Insufficient Cryptography), MASVS-CRYPTO-1
-/// Test cases: MASTG-TEST-0210, MASTG-TEST-0317
-/// iOS 13.0+ (CryptoKit)
-func encryptData(_ plaintext: Data, using key: SymmetricKey) throws -> Data {
-    let sealedBox = try AES.GCM.seal(plaintext, using: key)
-    guard let combined = sealedBox.combined else {
-        throw CryptoKitError.underlyingCoreCryptoError(error: 0)
-    }
-    return combined  // nonce || ciphertext || tag
-}
+enum CryptoError: Error { case invalidCiphertext }
 
-func decryptData(_ ciphertext: Data, using key: SymmetricKey) throws -> Data {
-    let sealedBox = try AES.GCM.SealedBox(combined: ciphertext)
-    return try AES.GCM.open(sealedBox, using: key)
+/// Compliance: OWASP M10 (Insufficient Cryptography), MASVS-CRYPTO-1.
+/// Test cases: MASTG-TEST-0210, MASTG-TEST-0317. iOS 13.0+.
+func sealForStorage(_ plaintext: Data, using key: SymmetricKey) throws -> Data {
+    let sealedBox = try AES.GCM.seal(plaintext, using: key)
+    guard let combined = sealedBox.combined else { throw CryptoError.invalidCiphertext }
+    return combined
 }
 
 // Compliance: MASVS-CRYPTO-2, MASTG-TEST-0213

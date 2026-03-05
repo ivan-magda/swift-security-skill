@@ -1,10 +1,12 @@
 # CryptoKit Public-Key Cryptography
 
+> **Scope:** ECDSA signing, ECDH key agreement, HPKE (iOS 17+), ML-KEM/ML-DSA and hybrid migration patterns (iOS 26+), key serialization, and Secure Enclave integration boundaries on Apple platforms.
+>
+> **Cross-references:** Secure Enclave key lifecycle → `secure-enclave.md`. Symmetric encryption after key agreement → `cryptokit-symmetric.md`. Keychain storage of CryptoKit keys → `credential-storage-patterns.md`. RSA legacy migration → `migration-legacy-stores.md`.
+
 CryptoKit's asymmetric cryptography API covers ECDSA signing, ECDH key agreement, HPKE (iOS 17+), and post-quantum ML-KEM/ML-DSA (iOS 26+). The framework enforces correct usage through its type system — signing keys cannot perform key agreement, shared secrets must pass through HKDF before use, and Secure Enclave access is limited to P256 for classical curves. This reference covers every asymmetric primitive from iOS 13 through iOS 26 with verified Swift implementations, common AI-generator mistakes, and the quantum migration path.
 
 CryptoKit was introduced at WWDC 2019 (session 709, "Cryptography and Your Apps") as a Swift-native replacement for the Security framework's C-based `SecKey` API. It wraps Apple's corecrypto library with hand-tuned assembly per microarchitecture, delivering both performance and memory safety — private key material is automatically zeroed on deallocation. iOS 14 added PEM/DER interoperability and standalone HKDF. iOS 17 brought HPKE (RFC 9180). iOS 26 (WWDC 2025, session 314, "Get ahead with quantum-secure cryptography") completes the picture with formally verified post-quantum algorithms and quantum-secure TLS enabled by default.
-
-> **Cross-references:** Secure Enclave key lifecycle → `secure-enclave.md`. Symmetric encryption after key agreement → `cryptokit-symmetric.md`. Keychain storage of CryptoKit keys → `credential-storage-patterns.md`. RSA legacy migration → `migration-legacy-stores.md`.
 
 ---
 
