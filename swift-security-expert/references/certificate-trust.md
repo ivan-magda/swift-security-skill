@@ -21,7 +21,7 @@
 
 Three trust evaluation functions exist. Only two are current.
 
-### ✅ SecTrustEvaluateAsyncWithError — recommended async API (iOS 13+)
+### SecTrustEvaluateAsyncWithError — recommended async API (iOS 13+)
 
 ```swift
 func SecTrustEvaluateAsyncWithError(
@@ -80,7 +80,7 @@ func SecTrustEvaluateWithError(_ trust: SecTrust, _ error: UnsafeMutablePointer<
 
 **Not deprecated.** Valid inside `URLSessionDelegate` callbacks (already off main thread). Apple's warning: do not call from the main run loop — it may require network access.
 
-### ❌ SecTrustEvaluate — deprecated since iOS 13
+### SecTrustEvaluate — deprecated since iOS 13
 
 ```swift
 // ❌ DEPRECATED: Returns opaque SecTrustResultType without error context
@@ -142,7 +142,7 @@ let policy = SecPolicyCreateSSL(true, nil)
 
 ## Four Pinning Strategies
 
-### ❌ Leaf certificate pinning — breaks on every renewal
+### Leaf certificate pinning — breaks on every renewal
 
 Commercial TLS certificates expire every 90 days (Let's Encrypt) to 398 days (CA/Browser Forum maximum). When the server renews, the certificate bytes change (new serial, validity dates, signature) and the pin breaks. Users are locked out until an App Store update ships.
 
@@ -166,7 +166,7 @@ if serverCertData == localCertData {
 
 **Verdict**: never use in production unless you control the full certificate lifecycle AND can update pins without App Store review.
 
-### ✅ Intermediate CA pinning — 5–10 year validity window
+### Intermediate CA pinning — 5–10 year validity window
 
 Pin an intermediate CA certificate. Any leaf issued by that CA passes the check. The server can freely renew its leaf certificate.
 
@@ -191,7 +191,7 @@ completionHandler(.cancelAuthenticationChallenge, nil)
 
 **Tradeoff**: trusts any certificate from that CA, not just yours. If the CA is compromised, a same-CA certificate could impersonate your server.
 
-### ✅ SPKI hash pinning — survives renewal with same key pair
+### SPKI hash pinning — survives renewal with same key pair
 
 Hashes the SubjectPublicKeyInfo (SPKI) structure. When certificates renew **with the same key pair**, the SPKI stays identical. This is the **recommended programmatic approach**.
 
@@ -298,7 +298,7 @@ openssl s_client -connect api.example.com:443 </dev/null 2>/dev/null | \
   openssl dgst -sha256 -binary | openssl enc -base64
 ```
 
-### ✅ NSPinnedDomains — declarative pinning, zero code (iOS 14+)
+### NSPinnedDomains — declarative pinning, zero code (iOS 14+)
 
 Apple's recommended approach. Enforced automatically by `URLSession` via ATS. Uses SPKI hashes.
 
@@ -570,14 +570,14 @@ Both research sources agree on all major recommendations. Key discrepancies in t
 
 ## Summary Checklist
 
-- [ ] **Trust evaluation uses modern API** — `SecTrustEvaluateWithError` (sync) or `SecTrustEvaluateAsyncWithError` (async); no deprecated `SecTrustEvaluate`
-- [ ] **Trust evaluation runs off main thread** — background dispatch queue for async; URLSession delegate callbacks already off-main for sync
-- [ ] **Pinning strategy avoids leaf certificates** — use SPKI hash pinning, intermediate CA pinning, or `NSPinnedDomains`; never pin raw leaf certificate bytes in production
-- [ ] **At least two pins configured** — primary + backup from different CA or pre-generated backup key pair
-- [ ] **System trust evaluated before pin checks** — always call `SecTrustEvaluateWithError` first, then compare SPKI hashes; never skip chain validation
-- [ ] **SPKI hashing includes ASN.1 header** — prepend correct algorithm-specific header before SHA-256 hashing raw key bytes from `SecKeyCopyExternalRepresentation`
-- [ ] **Custom anchors preserve system trust** — `SecTrustSetAnchorCertificates` paired with `SecTrustSetAnchorCertificatesOnly(_, false)` unless intentionally restricting
-- [ ] **SSL policy binds hostname** — `SecPolicyCreateSSL` always receives actual expected hostname, never `nil`
-- [ ] **ATS not globally disabled** — no `NSAllowsArbitraryLoads: true` in production; use targeted exceptions (`NSAllowsLocalNetworking`, per-domain exceptions)
-- [ ] **Chain inspection uses current APIs** — `SecTrustCopyCertificateChain` (iOS 15+) with fallback to `SecTrustGetCertificateAtIndex` for older targets; `SecCertificateCopyKey` not `SecTrustCopyPublicKey`
-- [ ] **Client certificate passwords not bundled** — PKCS#12 passwords prompted at runtime or stored in Keychain, never hardcoded or embedded in app bundle
+1. **Trust evaluation uses modern API** — `SecTrustEvaluateWithError` (sync) or `SecTrustEvaluateAsyncWithError` (async); no deprecated `SecTrustEvaluate`
+1. **Trust evaluation runs off main thread** — background dispatch queue for async; URLSession delegate callbacks already off-main for sync
+1. **Pinning strategy avoids leaf certificates** — use SPKI hash pinning, intermediate CA pinning, or `NSPinnedDomains`; never pin raw leaf certificate bytes in production
+1. **At least two pins configured** — primary + backup from different CA or pre-generated backup key pair
+1. **System trust evaluated before pin checks** — always call `SecTrustEvaluateWithError` first, then compare SPKI hashes; never skip chain validation
+1. **SPKI hashing includes ASN.1 header** — prepend correct algorithm-specific header before SHA-256 hashing raw key bytes from `SecKeyCopyExternalRepresentation`
+1. **Custom anchors preserve system trust** — `SecTrustSetAnchorCertificates` paired with `SecTrustSetAnchorCertificatesOnly(_, false)` unless intentionally restricting
+1. **SSL policy binds hostname** — `SecPolicyCreateSSL` always receives actual expected hostname, never `nil`
+1. **ATS not globally disabled** — no `NSAllowsArbitraryLoads: true` in production; use targeted exceptions (`NSAllowsLocalNetworking`, per-domain exceptions)
+1. **Chain inspection uses current APIs** — `SecTrustCopyCertificateChain` (iOS 15+) with fallback to `SecTrustGetCertificateAtIndex` for older targets; `SecCertificateCopyKey` not `SecTrustCopyPublicKey`
+1. **Client certificate passwords not bundled** — PKCS#12 passwords prompted at runtime or stored in Keychain, never hardcoded or embedded in app bundle

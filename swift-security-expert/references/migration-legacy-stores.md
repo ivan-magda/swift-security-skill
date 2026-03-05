@@ -498,6 +498,16 @@ let query: [String: Any] = [
 
 **Rule:** Use **only primary key attributes** (`kSecClass`, `kSecAttrService`, `kSecAttrAccount`) in search queries. Set `kSecAttrAccessible` only during `SecItemAdd` or in the update dictionary of `SecItemUpdate`.
 
+```swift
+// ✅ CORRECT: search by primary key only
+let query: [String: Any] = [
+    kSecClass as String: kSecClassGenericPassword,
+    kSecAttrService as String: service,
+    kSecAttrAccount as String: account,
+    kSecReturnData as String: kCFBooleanTrue as Any
+]
+```
+
 ---
 
 ## Team ID Change: The App Transfer Edge Case

@@ -14,7 +14,7 @@ The attack requires no exploit. An attacker uses Frida or objection to hook the 
 
 OWASP MASTG explicitly fails any app relying solely on `evaluatePolicy` (test MASTG-TEST-0266, requirements MSTG-AUTH-8 and MSTG-AUTH-12). The standard states: biometric authentication must not be event-bound (returning `true`/`false`); it must be based on unlocking the keychain/keystore.
 
-### ❌ The Dangerous Pattern — Boolean Gate
+### The Dangerous Pattern — Boolean Gate
 
 ```swift
 // ❌ DANGEROUS: Trivially bypassable with Frida — do NOT use for security
@@ -71,6 +71,8 @@ if (ObjC.available) {
 ```
 
 The objection wiki confirms the attack boundary: this bypass **does not work** against keychain items protected with access control flags like `.biometryCurrentSet` or `.biometryAny`. That boundary is the entire basis of the secure pattern.
+
+✅ Correct pattern in this threat model: use biometrics only to unlock keychain-protected secrets (`SecAccessControl` + `SecItemCopyMatching`), never as a standalone boolean gate.
 
 ---
 
@@ -268,7 +270,7 @@ This combination is practical for most production apps — strong biometric secu
 
 ## Biometric Availability Checks and Graceful Degradation
 
-### ❌ Incomplete Availability Check
+### Incomplete Availability Check
 
 ```swift
 // ❌ WRONG: Ignores WHY biometrics failed — user gets no guidance
@@ -279,7 +281,7 @@ func checkBiometrics() -> Bool {
 }
 ```
 
-### ✅ Complete Availability Evaluation
+### Complete Availability Evaluation
 
 ```swift
 // ✅ CORRECT: Evaluates every failure reason with actionable guidance
@@ -316,7 +318,7 @@ func evaluateBiometricAvailability() -> BiometricAvailability {
 }
 ```
 
-### ✅ Graceful Degradation Flow
+### Graceful Degradation Flow
 
 ```swift
 // ✅ Degrades from biometric → passcode → password login
@@ -397,7 +399,7 @@ class BiometricEnrollmentMonitor {
 
 `LAContext.evaluatePolicy`'s legacy completion handler executes on a private queue in an unspecified threading context. Direct UI updates from this callback cause crashes, especially on iOS 18 where threading strictness increased.
 
-### ✅ Actor-Isolated Biometric Keychain (iOS 15+)
+### Actor-Isolated Biometric Keychain (iOS 15+)
 
 ```swift
 @available(iOS 15.0, *)
@@ -439,7 +441,7 @@ actor BiometricKeychain {
 }
 ```
 
-### ✅ SwiftUI ViewModel Integration
+### SwiftUI ViewModel Integration
 
 ```swift
 @MainActor

@@ -1,5 +1,7 @@
 # Testing Keychain, CryptoKit, and Biometric Code
 
+> Scope: Unit, integration, and CI patterns for validating keychain, CryptoKit, and biometric security code across simulator, CI runners, and physical devices.
+
 **Protocol-based abstraction is the single most important pattern for testable security code.** Wrapping Security framework calls behind a Swift protocol lets you inject an in-memory mock for unit tests while reserving real keychain integration tests for physical devices. The core challenge is that keychain behavior differs dramatically across three environments — Xcode simulator, CI runner, and physical device — and tests that ignore these differences produce flaky failures, crashes, or false confidence.
 
 This reference covers mock design, CryptoKit round-trip tests, Secure Enclave guards, biometric mocking, CI/CD keychain creation, simulator limitations, Swift Testing framework patterns, mutation testing, and OWASP MASTG validation. All code targets Swift 5.9+/6.0, iOS 17–18+, with iOS 26 post-quantum notes where applicable.
@@ -12,7 +14,7 @@ Key sources: Apple TN3137 "On Mac keychain APIs and implementations," WWDC19-413
 
 The foundation of testable keychain code is a protocol abstracting the four Security framework operations. Every view model, service, or manager that touches the keychain depends on this protocol, never on the Security framework directly.
 
-### ✅ KeychainServiceProtocol with Real and Mock Implementations
+### KeychainServiceProtocol with Real and Mock Implementations
 
 ```swift
 import Foundation
@@ -188,7 +190,7 @@ struct EnvironmentDetector {
 
 ## Essential Testing Patterns
 
-### ✅ setUp/tearDown Cleanup for Real Keychain Tests
+### setUp/tearDown Cleanup for Real Keychain Tests
 
 ```swift
 final class KeychainIntegrationTests: XCTestCase {
@@ -215,7 +217,7 @@ final class KeychainIntegrationTests: XCTestCase {
 }
 ```
 
-### ❌ No Cleanup — Flaky Across Runs
+### No Cleanup — Flaky Across Runs
 
 ```swift
 // ❌ INCORRECT: No cleanup, no isolation
@@ -234,7 +236,7 @@ final class BadKeychainTests: XCTestCase {
 }
 ```
 
-### ✅ Testing Error Paths with Injected Failures
+### Testing Error Paths with Injected Failures
 
 ```swift
 final class KeychainErrorPathTests: XCTestCase {
@@ -270,7 +272,7 @@ final class KeychainErrorPathTests: XCTestCase {
 }
 ```
 
-### ✅ CryptoKit Round-Trip Tests (Simulator-Safe)
+### CryptoKit Round-Trip Tests (Simulator-Safe)
 
 All CryptoKit software operations work on simulator. These tests run everywhere:
 
@@ -335,7 +337,7 @@ final class CryptoKitTests: XCTestCase {
 
 > **Cross-reference contradiction:** One research source used a function returning `P256.Signing.PrivateKey` for both SE and software paths. This is a type error — `SecureEnclave.P256.Signing.PrivateKey` and `P256.Signing.PrivateKey` are distinct types. The correct approach is a protocol-based abstraction:
 
-### ✅ SigningKeyProvider Protocol with SE/Software Implementations
+### SigningKeyProvider Protocol with SE/Software Implementations
 
 ```swift
 import CryptoKit
@@ -383,7 +385,7 @@ struct SigningKeyFactory {
 }
 ```
 
-### ✅ / ❌ Testing Secure Enclave Code
+### Testing Secure Enclave Code
 
 ```swift
 // ❌ INCORRECT: Crashes on simulator and CI
@@ -422,7 +424,7 @@ func testSigningWithFallback() throws {
 
 Wrap `LAContext` behind a protocol for full control over biometric outcomes in tests. Alternatively, subclass `LAContext` directly (simpler but tighter coupling).
 
-### ✅ Protocol-Based Approach (Preferred)
+### Protocol-Based Approach (Preferred)
 
 ```swift
 import LocalAuthentication

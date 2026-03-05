@@ -184,7 +184,7 @@ func loadPassword(account: String) throws -> Data? {
 
 The `CFTypeRef` type depends entirely on which return flags and match limits are set:
 
-```
+```text
 kSecReturnData only      + kSecMatchLimitOne  → Data
 kSecReturnAttributes     + kSecMatchLimitOne  → [String: Any]
 kSecReturnData + Attrs   + kSecMatchLimitOne  → [String: Any]  (data under kSecValueData key)
@@ -583,14 +583,14 @@ During cross-validation of research inputs, the following discrepancies were not
 
 Before shipping keychain code, verify:
 
-- [ ] **1. OSStatus checked on every call** — exhaustive `switch` covering at minimum `errSecSuccess`, `errSecDuplicateItem`, `errSecItemNotFound`, `errSecInteractionNotAllowed`; no ignored return values
-- [ ] **2. Add-or-update pattern implemented** — `SecItemAdd` catches `-25299` and falls back to `SecItemUpdate`; duplicate saves never crash or silently fail
-- [ ] **3. Return flags explicitly set** — every `SecItemCopyMatching` call includes at least one `kSecReturn*` flag; no "success but nil" bugs
-- [ ] **4. CFTypeRef cast matches flags** — cast type corresponds to the combination of return flags and match limit (see Return Type Cheat Sheet)
-- [ ] **5. Zero SecItem calls on @MainActor** — all keychain access isolated in a dedicated `actor` (iOS 17+) or serial `DispatchQueue` (iOS 13–16)
-- [ ] **6. Fresh dictionaries per call** — no dictionary reuse across SecItem functions; add dict, query dict, and update dict are separate
-- [ ] **7. kSec\* constants used** — no raw string literals for dictionary keys; using either `[CFString: Any]` or `[String: Any]` with `as String` casts
-- [ ] **8. Queries are specific** — `kSecAttrService` + `kSecAttrAccount` included for GenericPassword; `kSecMatchLimitOne` used unless enumeration is needed
-- [ ] **9. Delete treats not-found as success** — `errSecItemNotFound` on delete is a valid postcondition, not an error
-- [ ] **10. macOS targets data protection keychain** — `kSecUseDataProtectionKeychain: true` set for macOS targets (automatic for Catalyst/iOS-on-Mac)
-- [ ] **11. errSecInteractionNotAllowed handled non-destructively** — device-locked state triggers retry-later logic, never delete-and-recreate
+1. **1. OSStatus checked on every call** — exhaustive `switch` covering at minimum `errSecSuccess`, `errSecDuplicateItem`, `errSecItemNotFound`, `errSecInteractionNotAllowed`; no ignored return values
+1. **2. Add-or-update pattern implemented** — `SecItemAdd` catches `-25299` and falls back to `SecItemUpdate`; duplicate saves never crash or silently fail
+1. **3. Return flags explicitly set** — every `SecItemCopyMatching` call includes at least one `kSecReturn*` flag; no "success but nil" bugs
+1. **4. CFTypeRef cast matches flags** — cast type corresponds to the combination of return flags and match limit (see Return Type Cheat Sheet)
+1. **5. Zero SecItem calls on @MainActor** — all keychain access isolated in a dedicated `actor` (iOS 17+) or serial `DispatchQueue` (iOS 13–16)
+1. **6. Fresh dictionaries per call** — no dictionary reuse across SecItem functions; add dict, query dict, and update dict are separate
+1. **7. kSec\* constants used** — no raw string literals for dictionary keys; using either `[CFString: Any]` or `[String: Any]` with `as String` casts
+1. **8. Queries are specific** — `kSecAttrService` + `kSecAttrAccount` included for GenericPassword; `kSecMatchLimitOne` used unless enumeration is needed
+1. **9. Delete treats not-found as success** — `errSecItemNotFound` on delete is a valid postcondition, not an error
+1. **10. macOS targets data protection keychain** — `kSecUseDataProtectionKeychain: true` set for macOS targets (automatic for Catalyst/iOS-on-Mac)
+1. **11. errSecInteractionNotAllowed handled non-destructively** — device-locked state triggers retry-later logic, never delete-and-recreate
