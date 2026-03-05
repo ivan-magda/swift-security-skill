@@ -447,7 +447,7 @@ func authenticate(_ data: Data, key: SymmetricKey) -> Data {
 // See cryptokit-symmetric.md for full PBKDF2 implementation
 ```
 
-iOS 26 adds SHA-3 family (`SHA3_256`, `SHA3_384`, `SHA3_512`) via CryptoKit per WWDC 2025-314.
+iOS 18 adds SHA-3 family (`SHA3_256`, `SHA3_384`, `SHA3_512`) in CryptoKit. WWDC 2025-314 covers post-quantum additions (ML-KEM, ML-DSA), not SHA-3.
 
 **MASTG test:** MASTG-TEST-0211. **MASTG demos:** MASTG-DEMO-0015, MASTG-DEMO-0016. **Legacy:** MSTG-CRYPTO-1.
 
@@ -666,7 +666,7 @@ Recommended: Semgrep on every PR + post-build binary scanning. CodeQL nightly fo
 WWDC 2025-314 introduced the most significant CryptoKit expansion since 2019:
 
 - **Symmetric keys:** `.bits256` recommended over `.bits128` for quantum resistance (anti-patterns #6, #10)
-- **Hashing:** SHA-3 family (`SHA3_256/384/512`) in CryptoKit on iOS 26 (anti-pattern #7)
+- **Hashing:** SHA-3 family (`SHA3_256/384/512`) in CryptoKit on iOS 18+ (anti-pattern #7)
 - **Post-quantum:** ML-KEM 768/1024, ML-DSA 65/87, X-Wing — all with Secure Enclave support
 - **TLS:** `X25519MLKEM768` enabled by default for `URLSession` in iOS 26
 - **Secure Enclave:** Hardware post-quantum key creation strengthens anti-patterns #3 and #5 fixes

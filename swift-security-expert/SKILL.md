@@ -308,16 +308,16 @@ This skill is **non-opinionated and correctness-focused**. Tone calibrates based
 
 **Elevated tone — directive.** Use "always," "never," "must" **only** for the seven Core Guidelines above and the 10 anti-patterns in `common-anti-patterns.md`. These are security invariants, not style preferences. The exhaustive list of directives:
 
-1. Never ignore `OSStatus` — always check return codes from `SecItem*` calls.
-2. Never use `LAContext.evaluatePolicy()` as a standalone auth gate — always bind biometrics to keychain items.
-3. Never store secrets in `UserDefaults`, `Info.plist`, `.xcconfig`, or `NSCoding` archives.
-4. Never call `SecItem*` on `@MainActor` — always use a background actor or queue.
-5. Always set `kSecAttrAccessible` explicitly on every `SecItemAdd`.
-6. Always use the add-or-update pattern (`SecItemAdd` → `SecItemUpdate` on `errSecDuplicateItem`).
-7. Always set `kSecUseDataProtectionKeychain: true` on macOS targets.
-8. Never reuse a nonce with the same AES-GCM key.
-9. Never use a raw ECDH shared secret as a symmetric key — always derive through HKDF.
-10. Never use `Insecure.MD5` or `Insecure.SHA1` for security purposes.
+1. Never ignore `OSStatus` — always check return codes from `SecItem*` calls. → `keychain-fundamentals.md`
+2. Never use `LAContext.evaluatePolicy()` as a standalone auth gate — always bind biometrics to keychain items. → `biometric-authentication.md`
+3. Never store secrets in `UserDefaults`, `Info.plist`, `.xcconfig`, or `NSCoding` archives. → `credential-storage-patterns.md`, `common-anti-patterns.md`
+4. Never call `SecItem*` on `@MainActor` — always use a background actor or queue. → `keychain-fundamentals.md`
+5. Always set `kSecAttrAccessible` explicitly on every `SecItemAdd`. → `keychain-access-control.md`
+6. Always use the add-or-update pattern (`SecItemAdd` → `SecItemUpdate` on `errSecDuplicateItem`). → `keychain-fundamentals.md`
+7. Always set `kSecUseDataProtectionKeychain: true` on macOS targets. → `keychain-fundamentals.md`
+8. Never reuse a nonce with the same AES-GCM key. → `cryptokit-symmetric.md`, `common-anti-patterns.md`
+9. Never use a raw ECDH shared secret as a symmetric key — always derive through HKDF. → `cryptokit-public-key.md`, `common-anti-patterns.md`
+10. Never use `Insecure.MD5` or `Insecure.SHA1` for security purposes. → `cryptokit-symmetric.md`, `common-anti-patterns.md`
 
 If a pattern is not on this list, use advisory tone. Do not escalate warnings beyond what the reference files support.
 
@@ -392,6 +392,8 @@ Load the **minimum set** of files needed to answer the query. Do not load all 14
 **6. State severity for findings.** CRITICAL = exploitable vulnerability. HIGH = silent data loss or wrong security boundary. MEDIUM = suboptimal but not immediately exploitable.
 
 **7. Prefer modern APIs with fallback notes.** Default to iOS 17+ (actor-based). Note fallbacks: iOS 15–16 (serial DispatchQueue + async/await bridge), iOS 13–14 (completion handlers).
+
+**8. Never fabricate citations or WWDC session numbers.** If a session/reference is not in the loaded references, say it is unverified and avoid inventing identifiers.
 
 ---
 
