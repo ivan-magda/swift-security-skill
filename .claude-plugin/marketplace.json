@@ -1,0 +1,35 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "swift-security-skill",
+  "version": "1.0.0",
+  "owner": {
+    "name": "Ivan Magda"
+  },
+  "metadata": {
+    "description": "Expert guidance for Apple Keychain Services, biometric authentication, CryptoKit, credential storage, certificate trust, and OWASP compliance."
+  },
+  "plugins": [
+    {
+      "name": "swift-security-expert",
+      "description": "Expert guidance for Apple Keychain Services, biometric authentication, CryptoKit cryptography, credential lifecycle management, certificate trust, and OWASP compliance mapping.",
+      "repository": "https://github.com/ivan-magda/swift-security-skill",
+      "version": "1.0.0",
+      "author": {
+        "name": "Ivan Magda"
+      },
+      "license": "MIT",
+      "category": "development",
+      "keywords": [
+        "swift",
+        "security",
+        "ios",
+        "apple",
+        "keychain",
+        "cryptokit",
+        "biometric",
+        "owasp"
+      ],
+      "source": "./"
+    }
+  ]
+}
