@@ -15,7 +15,7 @@ This repository distills verified Apple platform security practices into actiona
 
 ## Why This Skill Exists
 
-AI coding assistants routinely generate **dangerous security code**. The single most common pattern — using `LAContext.evaluatePolicy()` alone as an authentication gate — is trivially bypassable with runtime hooking tools. This skill exists to catch and correct these patterns before they ship.
+AI coding assistants routinely generate **dangerous security code**. This skill exists to catch and correct these patterns before they ship.
 
 ## How to Use This Skill
 
@@ -139,8 +139,6 @@ Use `/add-plugin` in Cursor chat and search for **Swift Security Expert**, or br
 **Correctness over coverage.** Every reference file contains paired correct and incorrect code examples with explanations of _why_ the wrong pattern fails — not just what the right pattern looks like. This is specifically designed to counteract the dangerous security patterns dominant in AI training data.
 
 **Non-opinionated.** Focuses on Apple-documented facts and best practices, not architecture mandates. Uses "prefer" and "consider" — not "always" and "never" — except where security correctness demands it.
-
-**Dual-provider research.** Every reference file was compiled from research executed through multiple AI research providers and cross-validated before synthesis, reducing single-source hallucination risk.
 
 ## Skill Structure
 
