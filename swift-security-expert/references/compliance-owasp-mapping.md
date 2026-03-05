@@ -6,7 +6,7 @@
 
 ---
 
-## 1. What Changed: 2016 → 2024 OWASP Mobile Top 10
+## What Changed: 2016 → 2024 OWASP Mobile Top 10
 
 The 2024 edition is a complete overhaul. Four categories are entirely new, two pairs were merged, and everything was renumbered. Any code comment or documentation citing the 2016 numbering is outdated.
 
@@ -27,7 +27,7 @@ The 2024 edition is a complete overhaul. Four categories are entirely new, two p
 
 ---
 
-## 2. Master Traceability Matrix
+## Master Traceability Matrix
 
 This matrix links each OWASP 2024 category to its MASVS controls, MASTG test cases, iOS APIs, and required audit evidence. Both research sources agree on the core mappings; this table unifies them.
 
@@ -42,7 +42,7 @@ This matrix links each OWASP 2024 category to its MASVS controls, MASTG test cas
 
 ---
 
-## 3. M1 — Improper Credential Usage
+## M1 — Improper Credential Usage
 
 **Scope:** Hardcoded credentials in source/config, insecure credential transmission, insecure on-device storage, weak auth protocols. Attack vectors: EASY. Impact: SEVERE. Entirely new in 2024 — no 2016 predecessor.
 
@@ -130,7 +130,7 @@ try data.write(to: documentsURL.appendingPathComponent("creds.dat"))
 
 ---
 
-## 4. M3 — Insecure Authentication/Authorization
+## M3 — Insecure Authentication/Authorization
 
 **Scope:** Merges 2016 M4 + M6. Covers remote server-side auth, local biometric auth, and client-only authorization. Attack vectors: EASY. Impact: SEVERE. Critical iOS risk: LAContext-only biometric auth is bypassable via Frida in under 10 seconds.
 
@@ -257,7 +257,7 @@ context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
 
 ---
 
-## 5. M9 — Insecure Data Storage
+## M9 — Insecure Data Storage
 
 **Scope:** All vulnerabilities in how apps store sensitive data: weak/no encryption, accessible locations, insufficient access controls, unintentional leakage (logs, caches, backups). Was M2 in 2016 — renumbered to M9 (priority shift, not diminished importance).
 
@@ -341,7 +341,7 @@ print("Password entered: \(password)")
 
 ---
 
-## 6. M10 — Insufficient Cryptography
+## M10 — Insufficient Cryptography
 
 **Scope:** Weak algorithms, insufficient key lengths, poor key management, insecure RNG, deprecated hashes. Attack vectors: AVERAGE. Impact: SEVERE. Was M5 in 2016.
 
@@ -424,7 +424,7 @@ let sealed = try AES.GCM.seal(data, using: key, nonce: nonce)
 
 ---
 
-## 7. kSecAttrAccessible Selection Guide
+## kSecAttrAccessible Selection Guide
 
 Keychain accessibility is the single most important iOS security decision — it simultaneously addresses M1, M3, M9, and M10 requirements.
 
@@ -443,7 +443,7 @@ Keychain accessibility is the single most important iOS security decision — it
 
 ---
 
-## 8. Enterprise Audit Workflow
+## Enterprise Audit Workflow
 
 ### How Security Teams Evaluate iOS Apps
 
@@ -484,7 +484,7 @@ As of iOS 26, zero jailbreakable devices exist for current versions. Auditors us
 
 ---
 
-## 9. Post-Quantum Cryptography Roadmap
+## Post-Quantum Cryptography Roadmap
 
 Apple announced PQC support at WWDC 2025 (Session 314: "Get ahead with quantum-secure cryptography"). The threat model: "harvest now, decrypt later" — adversaries collecting encrypted traffic today for future quantum decryption.
 
@@ -502,7 +502,7 @@ Apple uses hybrid cryptography — combining post-quantum and classical algorith
 
 ---
 
-## 10. Cross-Reference Index
+## Cross-Reference Index
 
 | iOS Practice                                              | M1  | M3  | M9  | M10              | Primary Reference                |
 | --------------------------------------------------------- | --- | --- | --- | ---------------- | -------------------------------- |
@@ -526,14 +526,14 @@ For 2025–2026, the most consequential change is post-quantum cryptography reac
 
 ## Summary Checklist
 
-1. All OWASP references use 2024 numbering (M1/M3/M9/M10), not 2016 (M2/M5/M4+M6)
-1. MASTG test case references use new MASTG-TEST-02xx/03xx IDs (not legacy MSTG-\* only)
-1. Credentials stored in Keychain with `ThisDeviceOnly` accessibility, never in UserDefaults/plists/files
-1. Biometric authentication uses `SecAccessControlCreateWithFlags` + `.biometryCurrentSet`, not LAContext-only
-1. `kSecAttrAccessible` and `kSecAttrAccessControl` are never set simultaneously in the same query
-1. All cryptographic operations use CryptoKit (iOS 13+) or SecKey — no CommonCrypto deprecated algorithms (MD5, DES, 3DES, RC4, ECB)
-1. AES-GCM encryption relies on CryptoKit auto-nonces; no manual nonce construction without a documented rotation strategy
-1. Sensitive files use `NSFileProtectionComplete` and are excluded from backup via `isExcludedFromBackup`
-1. No sensitive data appears in `NSLog`/`print` statements or keyboard caches (`.autocorrectionType = .no`, `.isSecureTextEntry = true`)
-1. Code comments include compliance annotations: OWASP category, MASVS control, and MASTG test case IDs
-1. Post-quantum readiness: cryptographic interfaces are abstracted behind protocols enabling future ML-KEM/ML-DSA adoption
+1. **OWASP 2024 numbering** — All references use 2024 numbering (M1/M3/M9/M10), not 2016 (M2/M5/M4+M6)
+2. **MASTG test IDs** — References use new MASTG-TEST-02xx/03xx IDs (not legacy MSTG-\* only)
+3. **Keychain-only credential storage** — Credentials stored in Keychain with `ThisDeviceOnly` accessibility, never in UserDefaults/plists/files
+4. **Keychain-bound biometrics** — Authentication uses `SecAccessControlCreateWithFlags` + `.biometryCurrentSet`, not LAContext-only
+5. **No dual access control** — `kSecAttrAccessible` and `kSecAttrAccessControl` are never set simultaneously in the same query
+6. **CryptoKit algorithms** — All cryptographic operations use CryptoKit (iOS 13+) or SecKey — no CommonCrypto deprecated algorithms (MD5, DES, 3DES, RC4, ECB)
+7. **Automatic nonces** — AES-GCM encryption relies on CryptoKit auto-nonces; no manual nonce construction without a documented rotation strategy
+8. **File protection** — Sensitive files use `NSFileProtectionComplete` and are excluded from backup via `isExcludedFromBackup`
+9. **No sensitive logging** — No sensitive data appears in `NSLog`/`print` statements or keyboard caches (`.autocorrectionType = .no`, `.isSecureTextEntry = true`)
+10. **Compliance annotations** — Code comments include OWASP category, MASVS control, and MASTG test case IDs
+11. **Post-quantum readiness** — Cryptographic interfaces are abstracted behind protocols enabling future ML-KEM/ML-DSA adoption

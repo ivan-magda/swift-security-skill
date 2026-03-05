@@ -482,6 +482,17 @@ All data protection testing **must** use physical devices with passcodes enabled
 
 ---
 
+## Cross-References
+
+- `keychain-fundamentals.md` — SecItem CRUD patterns, add-or-update, OSStatus handling
+- `biometric-authentication.md` — Biometric flag selection (`.biometryCurrentSet`, `.biometryAny`, `.userPresence`) and keychain-bound patterns
+- `secure-enclave.md` — Hardware-backed keys with `SecAccessControl` and `.privateKeyUsage`
+- `keychain-item-classes.md` — Class-specific accessibility considerations and primary key composition
+- `common-anti-patterns.md` — Anti-pattern #5 (missing `kSecAttrAccessible`), #3 (LAContext-only gate)
+- `compliance-owasp-mapping.md` — M9 (Insecure Data Storage) accessibility requirements
+
+---
+
 ## Summary Checklist
 
 1. **Always set `kSecAttrAccessible` explicitly** — never rely on the `WhenUnlocked` default; choose the level matching your access context (foreground vs background)

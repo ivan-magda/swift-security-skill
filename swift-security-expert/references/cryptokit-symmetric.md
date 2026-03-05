@@ -484,14 +484,14 @@ CryptoKit's design philosophy — authenticated encryption by default, automatic
 
 ## Summary Checklist
 
-1. **[ ] CryptoKit over CommonCrypto** — All new hashing, HMAC, and encryption uses `import CryptoKit`, not `import CommonCrypto` (except PBKDF2)
-2. **[ ] SHA-256 minimum** — No `Insecure.MD5` or `Insecure.SHA1` for any security purpose; CI rules flag these
-3. **[ ] AES-GCM or ChaChaPoly** — All symmetric encryption uses AEAD; no unauthenticated AES-CBC in new code
-4. **[ ] Automatic nonces** — The `nonce:` parameter is omitted from `seal()` calls unless protocol-mandated; no static or zero nonces
-5. **[ ] 256-bit keys** — `SymmetricKey(size: .bits256)` for quantum resilience; no `.bits128` for security-sensitive data
-6. **[ ] PBKDF2 before HKDF for passwords** — Password → `CCKeyDerivationPBKDF` (≥600,000 iterations, ≥16-byte random salt) → `SymmetricKey` → optional HKDF for subkeys; never raw password to `SymmetricKey(data:)`
-7. **[ ] SealedBox.combined for serialization** — Use `.combined` / `SealedBox(combined:)` for storage and network; no manual nonce/ciphertext/tag concatenation
-8. **[ ] Keys in Keychain** — Symmetric keys persisted via Keychain with `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`; no hardcoded keys in source, no UserDefaults, no plist
-9. **[ ] Constant-time HMAC verification** — Use `HMAC.isValidAuthenticationCode()`, never manual byte comparison
-10. **[ ] SHA-3 availability guarded** — `SHA3_256` wrapped in `#available(iOS 18.0, macOS 15.0, *)` with SHA-256 fallback
-11. **[ ] Associated data for context binding** — AES-GCM `authenticating:` parameter used when ciphertext must be bound to metadata (user ID, resource ID, version)
+1. **CryptoKit over CommonCrypto** — All new hashing, HMAC, and encryption uses `import CryptoKit`, not `import CommonCrypto` (except PBKDF2)
+2. **SHA-256 minimum** — No `Insecure.MD5` or `Insecure.SHA1` for any security purpose; CI rules flag these
+3. **AES-GCM or ChaChaPoly** — All symmetric encryption uses AEAD; no unauthenticated AES-CBC in new code
+4. **Automatic nonces** — The `nonce:` parameter is omitted from `seal()` calls unless protocol-mandated; no static or zero nonces
+5. **256-bit keys** — `SymmetricKey(size: .bits256)` for quantum resilience; no `.bits128` for security-sensitive data
+6. **PBKDF2 before HKDF for passwords** — Password → `CCKeyDerivationPBKDF` (≥600,000 iterations, ≥16-byte random salt) → `SymmetricKey` → optional HKDF for subkeys; never raw password to `SymmetricKey(data:)`
+7. **SealedBox.combined for serialization** — Use `.combined` / `SealedBox(combined:)` for storage and network; no manual nonce/ciphertext/tag concatenation
+8. **Keys in Keychain** — Symmetric keys persisted via Keychain with `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`; no hardcoded keys in source, no UserDefaults, no plist
+9. **Constant-time HMAC verification** — Use `HMAC.isValidAuthenticationCode()`, never manual byte comparison
+10. **SHA-3 availability guarded** — `SHA3_256` wrapped in `#available(iOS 18.0, macOS 15.0, *)` with SHA-256 fallback
+11. **Associated data for context binding** — AES-GCM `authenticating:` parameter used when ciphertext must be bound to metadata (user ID, resource ID, version)

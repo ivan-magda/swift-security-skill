@@ -1,4 +1,4 @@
-# Reference File #12 — Common Anti-Patterns
+# Common Anti-Patterns
 
 > **Scope:** The 10 most dangerous security anti-patterns that AI coding assistants generate for iOS apps. Each entry includes the vulnerability explanation, realistic ❌ insecure code, ✅ correct replacement, detection heuristic, and OWASP risk mapping. This is the skill's backbone — the single most important file for correcting AI-generated security code.
 >

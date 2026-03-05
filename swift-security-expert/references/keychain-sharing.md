@@ -1,4 +1,4 @@
-# Reference 09 — Keychain Sharing: Access Groups, Extensions, and Cross-Device Sync
+# Keychain Sharing: Access Groups, Extensions, and Cross-Device Sync
 
 > Scope: Access-group design and entitlement correctness for sharing keychain items across app targets, extensions, and devices.
 
@@ -419,6 +419,16 @@ The **Passwords app** introduced in iOS 18 and macOS Sequoia (WWDC 2024) provide
 **Passkey enhancements** continued through WWDC 2024–2025, including automatic passkey upgrades and credential import/export APIs (`ASCredentialExportManager`). These operate at the credential-manager level and do not introduce new keychain-sharing mechanisms.
 
 `kSecAttrAccessibleAlways` and `kSecAttrAccessibleAlwaysThisDeviceOnly` remain deprecated since iOS 12. Use `kSecAttrAccessibleAfterFirstUnlock` or the more restrictive `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly`.
+
+---
+
+## Cross-References
+
+- `keychain-fundamentals.md` — SecItem CRUD patterns, `kSecUseDataProtectionKeychain` on macOS, query dictionary construction
+- `keychain-access-control.md` — Accessibility constants for shared items, `ThisDeviceOnly` vs syncable implications
+- `keychain-item-classes.md` — Composite primary keys and how `kSecAttrAccessGroup` interacts with each `kSecClass`
+- `common-anti-patterns.md` — Anti-pattern #5 (missing `kSecAttrAccessible`), which compounds in shared contexts
+- `credential-storage-patterns.md` — OAuth token sharing between app and extensions
 
 ---
 

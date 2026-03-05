@@ -141,9 +141,9 @@ actor AtomicMigrator {
         let error: Error?
     }
 
-    private let keychain: any KeychainServiceProtocol
+    private let keychain: any MigrationKeychainProtocol
 
-    init(keychain: any KeychainServiceProtocol) {
+    init(keychain: any MigrationKeychainProtocol) {
         self.keychain = keychain
     }
 
@@ -629,7 +629,7 @@ Use **protocol-based abstraction** for unit tests (runs in CI on simulators) and
 
 ```swift
 // ✅ Protocol-based keychain abstraction for testable migrations
-protocol KeychainServiceProtocol: Actor {
+protocol MigrationKeychainProtocol: Actor {
     func save(_ data: Data, service: String, account: String,
               accessible: CFString) throws
     func read(service: String, account: String) throws -> Data
@@ -638,7 +638,7 @@ protocol KeychainServiceProtocol: Actor {
 }
 
 // In-memory mock for unit tests
-actor MockKeychainService: KeychainServiceProtocol {
+actor MockMigrationKeychain: MigrationKeychainProtocol {
     var store: [String: [String: Data]] = [:]
     var simulatedError: KeychainError?
 
@@ -667,7 +667,7 @@ actor MockKeychainService: KeychainServiceProtocol {
 ```swift
 // ✅ Example: verify atomic behavior — legacy data preserved on failure
 @Test func migrationPreservesLegacyDataOnKeychainFailure() async {
-    let mock = MockKeychainService()
+    let mock = MockMigrationKeychain()
     mock.simulatedError = .unexpectedStatus(-25308) // Simulate locked device
 
     let defaults = UserDefaults(suiteName: "test")!

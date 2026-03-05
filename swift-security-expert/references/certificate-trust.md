@@ -557,6 +557,15 @@ Both research sources agree on all major recommendations. Key discrepancies in t
 
 ---
 
+## Cross-References
+
+- `keychain-item-classes.md` — `kSecClassCertificate` and `kSecClassIdentity` storage, PKCS#12 import patterns
+- `keychain-fundamentals.md` — SecItem CRUD patterns for certificate and identity persistence
+- `cryptokit-public-key.md` — PEM/DER key interoperability, curve selection for client certificates
+- `compliance-owasp-mapping.md` — M5 (Insecure Communication) trust evaluation requirements
+
+---
+
 ## WWDC and Reference Citations
 
 - **WWDC 2017 Session 709** — "Your Apps and Evolving Network Security Standards" (ATS, CT, pinning guidance)
@@ -571,13 +580,13 @@ Both research sources agree on all major recommendations. Key discrepancies in t
 ## Summary Checklist
 
 1. **Trust evaluation uses modern API** — `SecTrustEvaluateWithError` (sync) or `SecTrustEvaluateAsyncWithError` (async); no deprecated `SecTrustEvaluate`
-1. **Trust evaluation runs off main thread** — background dispatch queue for async; URLSession delegate callbacks already off-main for sync
-1. **Pinning strategy avoids leaf certificates** — use SPKI hash pinning, intermediate CA pinning, or `NSPinnedDomains`; never pin raw leaf certificate bytes in production
-1. **At least two pins configured** — primary + backup from different CA or pre-generated backup key pair
-1. **System trust evaluated before pin checks** — always call `SecTrustEvaluateWithError` first, then compare SPKI hashes; never skip chain validation
-1. **SPKI hashing includes ASN.1 header** — prepend correct algorithm-specific header before SHA-256 hashing raw key bytes from `SecKeyCopyExternalRepresentation`
-1. **Custom anchors preserve system trust** — `SecTrustSetAnchorCertificates` paired with `SecTrustSetAnchorCertificatesOnly(_, false)` unless intentionally restricting
-1. **SSL policy binds hostname** — `SecPolicyCreateSSL` always receives actual expected hostname, never `nil`
-1. **ATS not globally disabled** — no `NSAllowsArbitraryLoads: true` in production; use targeted exceptions (`NSAllowsLocalNetworking`, per-domain exceptions)
-1. **Chain inspection uses current APIs** — `SecTrustCopyCertificateChain` (iOS 15+) with fallback to `SecTrustGetCertificateAtIndex` for older targets; `SecCertificateCopyKey` not `SecTrustCopyPublicKey`
-1. **Client certificate passwords not bundled** — PKCS#12 passwords prompted at runtime or stored in Keychain, never hardcoded or embedded in app bundle
+2. **Trust evaluation runs off main thread** — background dispatch queue for async; URLSession delegate callbacks already off-main for sync
+3. **Pinning strategy avoids leaf certificates** — use SPKI hash pinning, intermediate CA pinning, or `NSPinnedDomains`; never pin raw leaf certificate bytes in production
+4. **At least two pins configured** — primary + backup from different CA or pre-generated backup key pair
+5. **System trust evaluated before pin checks** — always call `SecTrustEvaluateWithError` first, then compare SPKI hashes; never skip chain validation
+6. **SPKI hashing includes ASN.1 header** — prepend correct algorithm-specific header before SHA-256 hashing raw key bytes from `SecKeyCopyExternalRepresentation`
+7. **Custom anchors preserve system trust** — `SecTrustSetAnchorCertificates` paired with `SecTrustSetAnchorCertificatesOnly(_, false)` unless intentionally restricting
+8. **SSL policy binds hostname** — `SecPolicyCreateSSL` always receives actual expected hostname, never `nil`
+9. **ATS not globally disabled** — no `NSAllowsArbitraryLoads: true` in production; use targeted exceptions (`NSAllowsLocalNetworking`, per-domain exceptions)
+10. **Chain inspection uses current APIs** — `SecTrustCopyCertificateChain` (iOS 15+) with fallback to `SecTrustGetCertificateAtIndex` for older targets; `SecCertificateCopyKey` not `SecTrustCopyPublicKey`
+11. **Client certificate passwords not bundled** — PKCS#12 passwords prompted at runtime or stored in Keychain, never hardcoded or embedded in app bundle

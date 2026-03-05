@@ -538,6 +538,18 @@ Static code review alone is insufficient. Verification requires dynamic testing:
 
 ---
 
+## Cross-References
+
+- `keychain-fundamentals.md` — SecItem CRUD patterns used by the keychain-bound biometric flow
+- `keychain-access-control.md` — `SecAccessControlCreateWithFlags`, accessibility constants, and flag composition rules
+- `secure-enclave.md` — Hardware-backed keys with biometric gating via `SecAccessControl`
+- `common-anti-patterns.md` — Anti-pattern #3 (LAContext-only biometric gate)
+- `credential-storage-patterns.md` — Biometric protection for high-value credentials (OAuth tokens, API keys)
+- `testing-security-code.md` — Protocol-based mocking for biometric flows, LAContext test strategies
+- `compliance-owasp-mapping.md` — M3 (Insecure Authentication/Authorization) biometric requirements
+
+---
+
 ## Summary Checklist
 
 1. **No standalone boolean gates** — `LAContext.evaluatePolicy()` is NEVER the sole authentication mechanism for sensitive data; secrets are always bound to keychain + `SecAccessControl`
