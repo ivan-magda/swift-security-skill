@@ -1,5 +1,7 @@
 # Credential Storage Patterns
 
+> Scope: Secure lifecycle patterns for client-side credentials on Apple platforms, including storage, refresh, rotation, migration, and logout cleanup.
+
 The iOS Keychain is the only Apple-sanctioned storage mechanism for OAuth tokens, API keys, passwords, and other credentials. Cybernews found in 2025 that 71% of iOS apps leak at least one hardcoded secret — primarily through `UserDefaults`, `Info.plist`, or `.xcconfig` files that produce plaintext artifacts trivially extractable from device backups or IPA bundles. This reference covers the complete credential lifecycle: secure storage via Keychain Services, OAuth2/OIDC authentication flows, atomic token refresh with rotation, runtime secret fetching, key rotation strategies, and comprehensive logout cleanup.
 
 Authoritative sources: Apple Developer Documentation (Keychain Services, Authentication Services), Apple Platform Security Guide (December 2024), WWDC 2019 Session 516 "What's New in Authentication", WWDC 2021 Session 10105 "Secure login with iCloud Keychain verification codes", WWDC 2024 Session 10125 "Streamline sign-in with passkey upgrades and credential managers", OWASP Mobile Top 10 2024, MASVS v2.1.0 (January 2024), MASTG v2, CISA/FBI "Product Security Bad Practices" advisory v2.0 (January 2025), and the Cybernews iOS app security research (March 2025).
@@ -77,6 +79,13 @@ func logout() {
     // BUG: refresh_token, user_profile, cached API keys all remain
 }
 ```
+
+### Correct Baseline for Credential Storage
+
+✅ Store credentials in Keychain, not `UserDefaults`/plist/source literals.
+✅ Set `kSecAttrAccessible` explicitly for each item based on access pattern.
+✅ Use add-or-update semantics and handle all `OSStatus` outcomes.
+✅ Delete all credential artifacts (access token, refresh token, derived caches) on logout.
 
 ---
 

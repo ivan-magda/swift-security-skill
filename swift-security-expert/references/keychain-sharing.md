@@ -1,5 +1,7 @@
 # Reference 09 — Keychain Sharing: Access Groups, Extensions, and Cross-Device Sync
 
+> Scope: Access-group design and entitlement correctness for sharing keychain items across app targets, extensions, and devices.
+
 Keychain access groups are the sole mechanism for sharing credentials between apps and extensions on Apple platforms. Correct configuration requires exact Team ID prefixes, per-target entitlements, and explicit `kSecAttrAccessGroup` usage in code — three requirements that most AI-generated code gets wrong. This reference covers access group mechanics, the two entitlement systems, correct and incorrect Swift patterns, macOS-specific requirements, iCloud sync, platform edge cases, and debugging strategies. All guidance reflects current behavior through iOS 18, macOS Sequoia 15, and the 2025–2026 developer landscape.
 
 **Authoritative sources:** Apple "Sharing Access to Keychain Items Among a Collection of Apps" documentation, TN3137 "On Mac Keychain APIs and Implementations," Apple Platform Security Guide (iCloud Keychain syncing), Quinn "The Eskimo!" DTS forum posts "SecItem: Fundamentals" and "SecItem: Pitfalls and Best Practices" (updated May 2025), Configuring Keychain Sharing documentation.
@@ -20,7 +22,7 @@ The system constructs a virtual array of access groups for each app by concatena
 
 Example for an app with one keychain group and one app group:
 
-```
+```text
 [SKMME9E2Y8.com.example.SharedItems,    ← keychain access group (default)
  SKMME9E2Y8.com.example.MyApp,          ← application identifier (automatic)
  group.com.example.AppSuite]             ← app group
@@ -91,7 +93,7 @@ Both entitlements can be used simultaneously. If only keychain sharing is needed
 
 ## Code Patterns: Correct and Incorrect
 
-### ✅ Storing an item with an explicit access group
+### Storing an item with an explicit access group
 
 ```swift
 import Security
@@ -118,7 +120,7 @@ guard status == errSecSuccess else {
 
 The Team ID must be the **literal 10-character string** from the Apple Developer account, not a build variable — `$(AppIdentifierPrefix)` only works in entitlements plists, not in Swift code.
 
-### ❌ Access group without Team ID prefix (most common AI mistake)
+### Access group without Team ID prefix (most common AI mistake)
 
 ```swift
 // ❌ WRONG — Missing Team ID prefix
@@ -137,7 +139,7 @@ let addQuery: [String: Any] = [
 
 Xcode's Keychain Sharing UI shows `com.example.SharedItems` without the prefix, which misleads developers and AI generators alike. **In code, the full `TEAMID.com.example.SharedItems` string is always required.**
 
-### ✅ App extension reading a shared keychain item
+### App extension reading a shared keychain item
 
 The extension target must have its own Keychain Sharing capability with the same group:
 
@@ -162,7 +164,7 @@ if status == errSecSuccess, let data = result as? Data {
 }
 ```
 
-### ❌ Extension that fails because it lacks the entitlement
+### Extension that fails because it lacks the entitlement
 
 ```swift
 // ❌ This code is syntactically correct, but the extension target is
@@ -173,7 +175,7 @@ if status == errSecSuccess, let data = result as? Data {
 
 **Each executable target — main app, widget extension, share extension, notification extension — needs its own Keychain Sharing entitlement.** Frameworks do not have entitlements; only the targets linking them do. In Xcode: select the extension target → Signing & Capabilities → + Capability → Keychain Sharing → add the same group name.
 
-### ✅ iCloud Keychain sync with `kSecAttrSynchronizable`
+### iCloud Keychain sync with `kSecAttrSynchronizable`
 
 ```swift
 let syncQuery: [String: Any] = [
@@ -205,7 +207,7 @@ let findQuery: [String: Any] = [
 ]
 ```
 
-### ❌ Assuming items sync by default
+### Assuming items sync by default
 
 ```swift
 // ❌ WRONG — This item will NOT sync to iCloud Keychain.
@@ -253,7 +255,7 @@ macOS maintains **two completely separate keychain implementations**, and confus
 
 **Data protection keychain** — originated on iOS and arrived on macOS via iCloud Keychain in 10.9. Uses keychain access groups + `SecAccessControl`, supports iCloud sync, Touch ID/Face ID, and Secure Enclave. Available only in user-login contexts — **`launchd` daemons cannot use it**.
 
-### ✅ Cross-platform macOS support with `kSecUseDataProtectionKeychain`
+### Cross-platform macOS support with `kSecUseDataProtectionKeychain`
 
 ```swift
 var query: [String: Any] = [

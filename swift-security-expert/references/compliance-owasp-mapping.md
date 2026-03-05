@@ -1,5 +1,7 @@
 # Compliance & OWASP Mapping Reference
 
+> Scope: Maps Apple-platform client security patterns to OWASP Mobile Top 10 (2024), MASVS, and MASTG controls for audit and remediation workflows.
+
 **Most AI code generators still cite the 2016 OWASP Mobile Top 10 numbering — "M2: Insecure Data Storage," "M5: Insufficient Cryptography" — which was completely replaced in 2024.** This reference maps current iOS security practices to the OWASP Mobile Top 10 (2024), MASVS v2.1.0, and MASTG test cases for the 2024–2026 compliance window. It covers the four categories most relevant to Keychain & Security work: M1 (Improper Credential Usage), M3 (Insecure Authentication/Authorization), M9 (Insecure Data Storage), and M10 (Insufficient Cryptography). Cybernews analysis of 156,080 iOS apps (March 2025) found 71% leak at least one hardcoded secret — CISA/FBI jointly classified hardcoded credentials as a "dangerous" bad practice (CWE-798) in January 2025.
 
 ---
@@ -60,7 +62,7 @@ This matrix links each OWASP 2024 category to its MASVS controls, MASTG test cas
 
 **App Attest (iOS 14+):** Closes the secret provisioning gap by verifying device integrity before the server issues credentials. This avoids hardcoded secrets entirely — the server provisions secrets only to attested, genuine app instances. See `credential-storage-patterns.md` for implementation details.
 
-### ✅ Compliant: Keychain credential storage
+### Compliant: Keychain credential storage
 
 ```swift
 import Security
@@ -70,6 +72,7 @@ import Security
 /// Test cases: MASTG-TEST-0213, MASTG-TEST-0299
 /// iOS 8.0+ (SecAccessControlCreateWithFlags), iOS 11.3+ (.biometryCurrentSet)
 func storeCredential(account: String, secret: Data, service: String) throws {
+    // ✅ CORRECT — secrets are persisted in Keychain with explicit access control
     // Delete existing item first to avoid errSecDuplicateItem
     let deleteQuery: [String: Any] = [
         kSecClass as String: kSecClassGenericPassword,
@@ -103,7 +106,7 @@ func storeCredential(account: String, secret: Data, service: String) throws {
 }
 ```
 
-### ❌ Anti-pattern: common AI-generated credential storage
+### Anti-pattern: common AI-generated credential storage
 
 ```swift
 // ❌ WRONG — UserDefaults writes to UNENCRYPTED plist at:
@@ -179,7 +182,7 @@ The correct pattern ties secrets to Keychain items protected by `SecAccessContro
 
 For high-security items, always use `.biometryCurrentSet`. If an attacker adds their fingerprint to a stolen device, `.biometryAny` items become accessible; `.biometryCurrentSet` items are permanently invalidated. See `biometric-authentication.md` for full implementation patterns.
 
-### ✅ Compliant: hardware-bound biometric authentication
+### Compliant: hardware-bound biometric authentication
 
 ```swift
 import LocalAuthentication
@@ -192,6 +195,7 @@ import Security
 
 // STEP 1: Store secret with biometric protection
 func storeBiometricProtectedSecret(account: String, secret: Data) throws {
+    // ✅ CORRECT — Secure Enclave gates secret release through keychain ACLs
     var error: Unmanaged<CFError>?
     guard let accessControl = SecAccessControlCreateWithFlags(
         kCFAllocatorDefault,
@@ -236,7 +240,7 @@ func retrieveBiometricProtectedSecret(account: String) throws -> Data? {
 }
 ```
 
-### ❌ Anti-pattern: LAContext-only authentication
+### Anti-pattern: LAContext-only authentication
 
 ```swift
 // ❌ WRONG — #2 most common iOS audit finding
@@ -293,7 +297,7 @@ context.evaluatePolicy(.deviceOwnerAuthenticationWithBiometrics,
 | C: Until First Auth | `NSFileProtectionCompleteUntilFirstUserAuthentication` | After first unlock, even when locked              | **Yes**  |
 | D: None             | `NSFileProtectionNone`                                 | Always; protected only by device UID              | No       |
 
-### ✅ Compliant: file storage with Data Protection
+### Compliant: file storage with Data Protection
 
 ```swift
 import Foundation
@@ -317,7 +321,7 @@ func excludeFromBackup(url: URL) throws {
 }
 ```
 
-### ❌ Anti-pattern: insecure data storage
+### Anti-pattern: insecure data storage
 
 ```swift
 // ❌ WRONG — Unencrypted plist
@@ -370,7 +374,7 @@ print("Password entered: \(password)")
 
 **iOS-specific testing:** Use radare2 to find references to `kCCAlgorithmDES`, `kCCAlgorithm3DES`, `kCCAlgorithmRC4`, `kCCOptionECBMode` in CommonCrypto calls. Search for `CC_MD5`, `CC_SHA1` or CryptoKit `Insecure.MD5`/`Insecure.SHA1`. MASTG demos: MASTG-DEMO-0015 (CommonCrypto broken hash), MASTG-DEMO-0016 (CryptoKit broken hash), MASTG-DEMO-0018 (broken encryption).
 
-### ✅ Compliant: CryptoKit encryption
+### Compliant: CryptoKit encryption
 
 ```swift
 import CryptoKit
@@ -396,7 +400,7 @@ func decryptData(_ ciphertext: Data, using key: SymmetricKey) throws -> Data {
 let encryptionKey = SymmetricKey(size: .bits256) // 256-bit from CSPRNG
 ```
 
-### ❌ Anti-pattern: insecure cryptography
+### Anti-pattern: insecure cryptography
 
 ```swift
 // ❌ WRONG — MD5 (collisions trivially constructable) — fails MASTG-TEST-0211
@@ -522,14 +526,14 @@ For 2025–2026, the most consequential change is post-quantum cryptography reac
 
 ## Summary Checklist
 
-- [ ] All OWASP references use 2024 numbering (M1/M3/M9/M10), not 2016 (M2/M5/M4+M6)
-- [ ] MASTG test case references use new MASTG-TEST-02xx/03xx IDs (not legacy MSTG-\* only)
-- [ ] Credentials stored in Keychain with `ThisDeviceOnly` accessibility, never in UserDefaults/plists/files
-- [ ] Biometric authentication uses `SecAccessControlCreateWithFlags` + `.biometryCurrentSet`, not LAContext-only
-- [ ] `kSecAttrAccessible` and `kSecAttrAccessControl` are never set simultaneously in the same query
-- [ ] All cryptographic operations use CryptoKit (iOS 13+) or SecKey — no CommonCrypto deprecated algorithms (MD5, DES, 3DES, RC4, ECB)
-- [ ] AES-GCM encryption relies on CryptoKit auto-nonces; no manual nonce construction without a documented rotation strategy
-- [ ] Sensitive files use `NSFileProtectionComplete` and are excluded from backup via `isExcludedFromBackup`
-- [ ] No sensitive data appears in `NSLog`/`print` statements or keyboard caches (`.autocorrectionType = .no`, `.isSecureTextEntry = true`)
-- [ ] Code comments include compliance annotations: OWASP category, MASVS control, and MASTG test case IDs
-- [ ] Post-quantum readiness: cryptographic interfaces are abstracted behind protocols enabling future ML-KEM/ML-DSA adoption
+1. All OWASP references use 2024 numbering (M1/M3/M9/M10), not 2016 (M2/M5/M4+M6)
+1. MASTG test case references use new MASTG-TEST-02xx/03xx IDs (not legacy MSTG-\* only)
+1. Credentials stored in Keychain with `ThisDeviceOnly` accessibility, never in UserDefaults/plists/files
+1. Biometric authentication uses `SecAccessControlCreateWithFlags` + `.biometryCurrentSet`, not LAContext-only
+1. `kSecAttrAccessible` and `kSecAttrAccessControl` are never set simultaneously in the same query
+1. All cryptographic operations use CryptoKit (iOS 13+) or SecKey — no CommonCrypto deprecated algorithms (MD5, DES, 3DES, RC4, ECB)
+1. AES-GCM encryption relies on CryptoKit auto-nonces; no manual nonce construction without a documented rotation strategy
+1. Sensitive files use `NSFileProtectionComplete` and are excluded from backup via `isExcludedFromBackup`
+1. No sensitive data appears in `NSLog`/`print` statements or keyboard caches (`.autocorrectionType = .no`, `.isSecureTextEntry = true`)
+1. Code comments include compliance annotations: OWASP category, MASVS control, and MASTG test case IDs
+1. Post-quantum readiness: cryptographic interfaces are abstracted behind protocols enabling future ML-KEM/ML-DSA adoption

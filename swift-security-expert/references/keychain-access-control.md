@@ -1,5 +1,7 @@
 # Keychain Access Control
 
+> Scope: Selecting `kSecAttrAccessible` classes and `SecAccessControl` flags to enforce the correct lock-state and user-presence guarantees for keychain items.
+
 Data protection classes (`kSecAttrAccessible`) and runtime authentication gates (`SecAccessControl`) form the two-layer security model protecting every keychain item. The first controls **when** an item's class key is available in memory based on device state; the second controls **how** the user must authenticate at access time. Both must be satisfied for a read to succeed. Getting this wrong is the single most common cause of production keychain failures — background operations that silently return `nil`, items that vanish after device migration, or credentials left decryptable at rest.
 
 Sources: Apple Platform Security Guide (2024–2026 editions), Apple Keychain Services documentation, TN3137, WWDC 2014 Session 711 ("Keychain and Authentication with Touch ID"), WWDC 2015 Session 706, SecAccessControl documentation, OWASP MASTG.
@@ -271,7 +273,9 @@ let access = SecAccessControlCreateWithFlags(
 
 ## Code Patterns
 
-### ✅ Biometric protection with highest security
+✅ The first two examples are correct patterns for foreground and background access. The third example is intentionally incorrect.
+
+### Biometric protection with highest security
 
 ```swift
 func saveBiometricProtectedItem(data: Data, account: String, service: String) throws {
@@ -319,7 +323,7 @@ func saveBiometricProtectedItem(data: Data, account: String, service: String) th
 
 > **Important:** `SecItemUpdate` **cannot** change a `SecAccessControl` attribute on an existing item. To change access control, you must delete and re-add. Both sources confirm this.
 
-### ✅ Background-accessible token (push notifications, VPN, widgets)
+### Background-accessible token (push notifications, VPN, widgets)
 
 ```swift
 func saveBackgroundToken(_ token: Data, account: String, service: String) throws {
@@ -351,7 +355,7 @@ func saveBackgroundToken(_ token: Data, account: String, service: String) throws
 }
 ```
 
-### ❌ Accessing a `WhenUnlocked` item from a background extension
+### Accessing a `WhenUnlocked` item from a background extension
 
 ```swift
 // Runs in WidgetKit TimelineProvider or NotificationServiceExtension while locked — WILL fail

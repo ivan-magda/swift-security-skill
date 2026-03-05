@@ -677,14 +677,14 @@ WWDC 2025-314 introduced the most significant CryptoKit expansion since 2019:
 
 When reviewing iOS code for security anti-patterns, verify each item:
 
-- [ ] **No secrets in UserDefaults** — tokens, passwords, API keys, JWTs use Keychain with `kSecAttrAccessibleWhenUnlockedThisDeviceOnly` or stricter
-- [ ] **No hardcoded keys in source** — API keys fetched at runtime via server proxy or authenticated endpoint; no high-entropy string literals, no secrets in `.xcconfig` or `Info.plist`
-- [ ] **Biometrics bound to Keychain** — `evaluatePolicy` is never used alone to gate sensitive actions; `SecAccessControlCreateWithFlags` with `.biometryCurrentSet` protects keychain items
-- [ ] **All SecItem calls checked** — `SecItemAdd` handles `errSecDuplicateItem` with `SecItemUpdate` fallback; `SecItemCopyMatching` handles `errSecItemNotFound`; no discarded `OSStatus` return values
-- [ ] **Explicit data protection class** — every `SecItemAdd` includes `kSecAttrAccessible` or `kSecAttrAccessControl`; no `kSecAttrAccessibleAlways`; `ThisDeviceOnly` variants used for non-syncing items
-- [ ] **No nonce reuse** — `AES.GCM.seal` called without explicit `nonce:` parameter (auto-random); no stored/global/counter-based nonce variables
-- [ ] **No broken hashes** — no `Insecure.MD5`, `Insecure.SHA1`, `CC_MD5`, `CC_SHA1` for security purposes; passwords use KDF (Argon2id, bcrypt, PBKDF2 with ≥310,000 iterations)
-- [ ] **No sensitive data in logs** — `print()` and `NSLog()` never contain tokens, keys, or credentials; `os_log` uses `%{private}@`; `Logger` uses `.private` or `.private(mask: .hash)`
-- [ ] **First-launch keychain cleanup** — `UserDefaults` flag + `SecItemDelete` for all classes runs before SDK initialization at app startup
-- [ ] **Cryptographic RNG only** — `SecRandomCopyBytes` or CryptoKit APIs for tokens, nonces, salts, keys; no `arc4random` / `rand()` / `drand48()` / GameplayKit RNG in security contexts
-- [ ] **iOS 26 readiness** — symmetric keys use `.bits256`; no deprecated algorithms; aware of post-quantum CryptoKit APIs for forward-looking implementations
+1. **No secrets in UserDefaults** — tokens, passwords, API keys, JWTs use Keychain with `kSecAttrAccessibleWhenUnlockedThisDeviceOnly` or stricter
+1. **No hardcoded keys in source** — API keys fetched at runtime via server proxy or authenticated endpoint; no high-entropy string literals, no secrets in `.xcconfig` or `Info.plist`
+1. **Biometrics bound to Keychain** — `evaluatePolicy` is never used alone to gate sensitive actions; `SecAccessControlCreateWithFlags` with `.biometryCurrentSet` protects keychain items
+1. **All SecItem calls checked** — `SecItemAdd` handles `errSecDuplicateItem` with `SecItemUpdate` fallback; `SecItemCopyMatching` handles `errSecItemNotFound`; no discarded `OSStatus` return values
+1. **Explicit data protection class** — every `SecItemAdd` includes `kSecAttrAccessible` or `kSecAttrAccessControl`; no `kSecAttrAccessibleAlways`; `ThisDeviceOnly` variants used for non-syncing items
+1. **No nonce reuse** — `AES.GCM.seal` called without explicit `nonce:` parameter (auto-random); no stored/global/counter-based nonce variables
+1. **No broken hashes** — no `Insecure.MD5`, `Insecure.SHA1`, `CC_MD5`, `CC_SHA1` for security purposes; passwords use KDF (Argon2id, bcrypt, PBKDF2 with ≥310,000 iterations)
+1. **No sensitive data in logs** — `print()` and `NSLog()` never contain tokens, keys, or credentials; `os_log` uses `%{private}@`; `Logger` uses `.private` or `.private(mask: .hash)`
+1. **First-launch keychain cleanup** — `UserDefaults` flag + `SecItemDelete` for all classes runs before SDK initialization at app startup
+1. **Cryptographic RNG only** — `SecRandomCopyBytes` or CryptoKit APIs for tokens, nonces, salts, keys; no `arc4random` / `rand()` / `drand48()` / GameplayKit RNG in security contexts
+1. **iOS 26 readiness** — symmetric keys use `.bits256`; no deprecated algorithms; aware of post-quantum CryptoKit APIs for forward-looking implementations

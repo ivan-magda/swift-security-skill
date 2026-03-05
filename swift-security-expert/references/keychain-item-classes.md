@@ -1,5 +1,7 @@
 # Keychain Item Classes
 
+> Scope: Correct class selection and attribute usage for all five `kSecClass` types, with emphasis on uniqueness rules, AutoFill behavior, and migration safety.
+
 The five `kSecClass` types — GenericPassword, InternetPassword, Key, Certificate, and Identity — each serve distinct roles with unique attribute requirements that AI code generators routinely get wrong. **Choosing the wrong class** causes silent AutoFill failures, query collisions, and subtle security degradation. This reference covers every class with its composite primary key, required and optional attributes, correct Swift patterns, and the specific mistakes to watch for.
 
 The keychain is an encrypted SQLite database optimized for small secrets. Each item class defines a set of attributes forming a **composite primary key** — adding an item whose primary key matches an existing item returns `errSecDuplicateItem` (-25299). Understanding these primary keys is the single most important concept for correct keychain usage.

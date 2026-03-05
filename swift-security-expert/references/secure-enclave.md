@@ -1,5 +1,7 @@
 # Secure Enclave: Hardware-Backed Key Operations for iOS & macOS
 
+> Scope: Secure Enclave capabilities, constraints, and integration patterns for key generation, persistence, biometric gating, and testability on Apple platforms.
+
 **The Secure Enclave (SE) is Apple's dedicated security coprocessor — a physically isolated chip that generates, stores, and operates on cryptographic keys in silicon that never exposes private key material to the application processor.** Every modern Apple device since iPhone 5s (2013) contains this hardware, but developers routinely misuse it because of subtle API behaviors, simulator traps, and fundamental architectural constraints that AI code generators consistently get wrong. This reference covers CryptoKit's `SecureEnclave` module (iOS 13+), the legacy Security framework path, iOS 26 post-quantum additions, correct and incorrect code patterns, persistence, testing strategies, and the hardware limitations you must design around.
 
 Primary sources: Apple Platform Security Guide (Secure Enclave chapter), Apple Developer Documentation for CryptoKit `SecureEnclave` types, WWDC 2019 Session 709 "Cryptography and Your Apps," WWDC 2025 "Get ahead with quantum-secure cryptography," Apple DTS documentation "Protecting keys with the Secure Enclave," and "Storing CryptoKit Keys in the Keychain."

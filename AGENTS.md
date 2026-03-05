@@ -6,6 +6,7 @@ This repository contains the **Keychain & Security Expert Skill** — a non-opin
 
 ```
 AGENTS.md                              ← you are here (repo-level agent onboarding)
+CLAUDE.md -> AGENTS.md                ← symlink for Claude Code compatibility
 README.md                              ← human-facing documentation
 LICENSE
 .claude-plugin/
