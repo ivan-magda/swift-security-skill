@@ -318,6 +318,9 @@ func clearKeychainOnFreshInstall() {
 }
 ```
 
+> For the complete versioned migration approach and fresh-install detection pattern, see `migration-legacy-stores.md` § First-Launch Keychain Cleanup.
+> Key point: The pattern above handles the basic sharing-context case; the canonical file covers multi-version migration coordination, safe deletion ordering, and CI implications.
+
 ### App transfers between teams break keychain access
 
 Items are tied to the original Team ID. If an app is transferred to another developer account, keychain items stored under the old Team ID become inaccessible. Recommended workaround: transfer the app back, release an update that exports/migrates keychain data to an external store, then transfer again.

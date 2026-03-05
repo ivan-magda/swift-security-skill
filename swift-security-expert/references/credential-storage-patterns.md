@@ -91,7 +91,7 @@ func logout() {
 
 ## Data Protection Class Selection for Credentials
 
-Choosing the correct `kSecAttrAccessible` value is the highest-ROI decision for credential confidentiality. The Keychain encrypts items using dual AES-256-GCM keys: a metadata key (cached for fast searches) and a per-row secret key that always requires a Secure Enclave round trip (Apple Platform Security Guide, December 2024).
+Choosing the correct `kSecAttrAccessible` value is the highest-ROI decision for credential confidentiality. The Keychain encrypts items using dual AES-256-GCM keys: a metadata key (cached for fast searches) and a per-row secret key that always requires a Secure Enclave round trip (Apple Platform Security Guide, December 2024; full architecture: `keychain-fundamentals.md` § Two-Tier Encryption and Query Cost).
 
 | Accessibility Class                                | Device-Bound | Background Access       | Primary Use Case              | Risk Note                                                           |
 | -------------------------------------------------- | ------------ | ----------------------- | ----------------------------- | ------------------------------------------------------------------- |
@@ -101,6 +101,8 @@ Choosing the correct `kSecAttrAccessible` value is the highest-ROI decision for 
 | `kSecAttrAccessibleAfterFirstUnlock`               | No           | Yes                     | Background + backup migration | Transfers via encrypted backup; avoid for sensitive tokens          |
 
 **Rule of thumb:** Default to `kSecAttrAccessibleWhenUnlockedThisDeviceOnly` for all OAuth tokens and API keys. Use `AfterFirstUnlockThisDeviceOnly` only when background refresh is required (e.g., silent push notification handling). Never use `kSecAttrSynchronizable` for app tokens — iCloud Keychain sync is designed for website passwords, not application secrets.
+
+> For complete accessibility constant selection criteria, data protection tier explanations, and `SecAccessControl` interaction rules, see `keychain-access-control.md` § The "When" Layer: Seven Accessibility Constants.
 
 ---
 
