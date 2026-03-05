@@ -430,6 +430,8 @@ func migrateServiceName() async throws {
 
 iOS 15+ pre-warming and background execution (push notifications, background fetch, Live Activities) can launch your app while the device is locked. The `kSecAttrAccessible` value you choose determines whether keychain operations succeed in these contexts.
 
+> For the complete accessibility constant selection matrix with data protection tiers and security trade-offs, see `keychain-access-control.md` § The "When" Layer: Seven Accessibility Constants. The table below summarizes the four constants most relevant to background migration scenarios.
+
 | Accessibility constant                            | Available when locked | Background safe | Notes                              |
 | ------------------------------------------------- | --------------------- | --------------- | ---------------------------------- |
 | `kSecAttrAccessibleWhenUnlocked` (default)        | No                    | No              | Foreground only                    |

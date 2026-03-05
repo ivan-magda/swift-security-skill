@@ -27,6 +27,8 @@ func saveTokens(accessToken: String, refreshToken: String) {
 
 **OWASP mapping:** Violates M9 (Insecure Data Storage), MASVS-STORAGE-1, MASWE-0002, and fails MASTG-TEST-0300/0301.
 
+> For the canonical ❌/✅ code samples, objection detection commands, and full remediation checklist for this pattern, see `common-anti-patterns.md` § Anti-Pattern #1 — Storing Secrets in UserDefaults.
+
 ### Anti-Pattern 2 — Hardcoded API Keys in Source Code
 
 CISA and the FBI classify hardcoded credentials as a formal "bad security practice" (CWE-798, ranked in 2024 CWE Top 25). The Cybernews research team found 815,000+ hardcoded secrets across 156,080 iOS apps simply by unzipping IPA files and scanning plaintext — no decompilation required.

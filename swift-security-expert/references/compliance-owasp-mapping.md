@@ -192,6 +192,7 @@ import Security
 /// Compliance: OWASP M3 (Insecure Auth), MASVS-AUTH-2
 /// Test cases: MASTG-TEST-0266, MASTG-TEST-0270
 /// iOS 11.3+ (.biometryCurrentSet)
+/// Canonical pattern with full error handling: biometric-authentication.md § The Secure Pattern — Hardware-Bound Secrets
 
 // STEP 1: Store secret with biometric protection
 func storeBiometricProtectedSecret(account: String, secret: Data) throws {

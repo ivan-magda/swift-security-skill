@@ -443,7 +443,7 @@ func authenticate(_ data: Data, key: SymmetricKey) -> Data {
 
 // Password storage — NEVER raw hashes. Use a KDF:
 // Server-side: Argon2id, bcrypt, or scrypt
-// On-device: PBKDF2 with ≥310,000 iterations (OWASP 2023 minimum)
+// On-device: PBKDF2 with ≥600,000 iterations (OWASP 2023 minimum for HMAC-SHA256)
 // See cryptokit-symmetric.md for full PBKDF2 implementation
 ```
 

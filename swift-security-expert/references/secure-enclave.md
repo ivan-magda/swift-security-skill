@@ -317,6 +317,8 @@ These are **hardware-backed**, not software-only. Apple confirmed SE support exp
 
 The SE's classical elliptic curve support remains **P-256 only** — the expansion is entirely into lattice-based post-quantum algorithms.
 
+> For the full post-quantum algorithm catalog — including software-only types, X-Wing hybrid KEM construction, key/signature size trade-offs, HPKE integration patterns, and hybrid classical+PQ signing — see `cryptokit-public-key.md` § Post-Quantum Cryptography (iOS 26+). This section covers the hardware-backed SE variants specifically.
+
 ---
 
 ## When to use SE versus software keys
