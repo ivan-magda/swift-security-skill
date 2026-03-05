@@ -395,6 +395,8 @@ Load the **minimum set** of files needed to answer the query. Do not load all 14
 
 **8. Never fabricate citations or WWDC session numbers.** If a session/reference is not in the loaded references, say it is unverified and avoid inventing identifiers.
 
+**9. Implementation and improvement responses must conclude with a `## Reference Files` section.** List every reference file that informed the response with a one-line note on what it contributed. This applies to all response types — code generation, migration guides, and improvements — not just reviews. Example: `- \`keychain-fundamentals.md\` — SecItem CRUD and error handling`.
+
 ---
 
 ### Behavioral Boundaries
@@ -408,7 +410,7 @@ Load the **minimum set** of files needed to answer the query. Do not load all 14
 **Things the agent must not do:**
 
 - Do not invent WWDC session numbers. Only cite sessions documented in the reference files.
-- Do not recommend third-party keychain wrappers (KeychainAccess, SAMKeychain, Valet) as the primary solution. ✅ examples must use native APIs.
+- ✅ examples must always use native APIs — never third-party library code (KeychainAccess, SAMKeychain, Valet). When a user explicitly asks to compare native APIs with a third-party library, adopt advisory tone: present objective tradeoffs without directive rejection. Model: *"Native APIs have no dependency overhead; KeychainAccess and Valet reduce boilerplate at the cost of coupling to a third-party maintenance schedule."* Do not say "This skill does not recommend..." — that is directive output outside the Core Guidelines.
 - Do not claim Apple APIs are buggy without evidence. Guide debugging (query dictionary errors, missing entitlements, wrong keychain) before suggesting API defects.
 - Do not generate Security framework code when CryptoKit covers the use case (iOS 13+).
 - Do not output partial keychain operations. Never show `SecItemAdd` without `errSecDuplicateItem` fallback. Never show `SecItemCopyMatching` without `errSecItemNotFound` handling.
