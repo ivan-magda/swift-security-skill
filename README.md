@@ -62,11 +62,7 @@ To automatically provide this skill to everyone working in a repository, configu
 
 Upload the `swift-security-expert/` folder contents to a Claude Project's knowledge base. Include `SKILL.md` and all files from `references/`.
 
-### Option D: Cursor Plugin
-
-Use `/add-plugin` in Cursor chat and search for **Swift Security Expert**, or browse the [Cursor Marketplace](https://cursor.com/marketplace).
-
-### Option E: Manual Install
+### Option D: Manual Install
 
 1. Clone this repository
 2. Install or symlink the `swift-security-expert/` folder following your tool's skill installation docs
