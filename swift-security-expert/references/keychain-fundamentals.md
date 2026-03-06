@@ -86,7 +86,7 @@ func savePassword(_ password: String, account: String) throws {
 
     var addQuery = baseQuery
     addQuery[kSecValueData] = Data(password.utf8)
-    addQuery[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlock
+    addQuery[kSecAttrAccessible] = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
 
     let addStatus = SecItemAdd(addQuery as CFDictionary, nil)
 
@@ -323,7 +323,7 @@ actor KeychainManager {
     // MARK: - Save (add-or-update)
 
     func save(_ data: Data, for key: String,
-              accessibility: CFTypeRef = kSecAttrAccessibleAfterFirstUnlock
+              accessibility: CFTypeRef = kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly
     ) throws {
         let baseQuery: [CFString: Any] = [
             kSecClass: kSecClassGenericPassword,
@@ -573,7 +573,7 @@ During cross-validation of research inputs, the following discrepancies were not
 
 1. **Dictionary key type convention:** Claude source uses `[CFString: Any]`; Parallel source uses `[String: Any]` with `kSec* as String` casts. **Resolution:** Both are correct. The `[CFString: Any]` style is slightly more concise; the `[String: Any]` style is more common in community code. This file uses `[CFString: Any]` for conciseness but shows both styles in the String Keys section.
 
-2. **Default accessibility recommendation:** Claude source cites OWASP recommending `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly` for highly sensitive data; Parallel source defaults to `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`. **Resolution:** Both are valid for different threat models. `WhenPasscodeSet` is strongest but items are deleted if the user removes their passcode. `WhenUnlockedThisDeviceOnly` is the safe general default. The actor manager example uses `AfterFirstUnlock` for broadest compatibility including background scenarios.
+2. **Default accessibility recommendation:** Claude source cites OWASP recommending `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly` for highly sensitive data; Parallel source defaults to `kSecAttrAccessibleWhenUnlockedThisDeviceOnly`. **Resolution:** Both are valid for different threat models. `WhenPasscodeSet` is strongest but items are deleted if the user removes their passcode. `WhenUnlockedThisDeviceOnly` is the safe general default for foreground-only access. The actor manager example uses `AfterFirstUnlockThisDeviceOnly` for background compatibility while remaining device-bound.
 
 3. **`kSecReturnData` + `kSecMatchLimitAll` restriction:** Parallel source claims this combination is restricted for password classes. Claude source does not mention this. **Resolution:** This restriction exists in some OS versions / keychain implementations. Safest practice is to use `kSecReturnRef` or `kSecReturnAttributes` with `LimitAll`, then fetch data per-item. Noted in the Return Type Cheat Sheet.
 
