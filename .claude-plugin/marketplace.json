@@ -13,7 +13,6 @@
       "name": "swift-security-expert",
       "description": "Expert guidance for Apple Keychain Services, biometric authentication, CryptoKit cryptography, credential lifecycle management, certificate trust, and OWASP compliance mapping.",
       "repository": "https://github.com/ivan-magda/swift-security-skill",
-      "version": "1.0.0",
       "author": {
         "name": "Ivan Magda"
       },
