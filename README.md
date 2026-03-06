@@ -25,6 +25,8 @@ AI coding assistants routinely generate **dangerous security code**. This skill 
 npx skills add https://github.com/ivan-magda/swift-security-skill --skill swift-security-expert
 ```
 
+For more information, [visit the skills.sh platform page](https://skills.sh/ivan-magda/swift-security-skill/swift-security-expert).
+
 Then use it in your AI agent:
 
 > Use the swift security expert skill and review the current security code for authentication bypasses, credential storage issues, and cryptographic correctness.
