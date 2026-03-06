@@ -197,7 +197,7 @@ Contributions are welcome. When adding or editing reference files:
 - [Apple CryptoKit Documentation](https://developer.apple.com/documentation/cryptokit)
 - [WWDC 2019-709 — "Cryptography and Your Apps"](https://developer.apple.com/videos/play/wwdc2019/709/)
 - [WWDC 2020 — "Secure your app: threat modeling and anti-patterns"](https://developer.apple.com/videos/play/wwdc2020/10189/)
-- [WWDC 2025 — "Get ahead with quantum-secure cryptography"](https://developer.apple.com/videos/play/wwdc2025/)
+- [WWDC 2025 — "Get ahead with quantum-secure cryptography"](https://developer.apple.com/videos/play/wwdc2025/314)
 - [TN3137 — On Mac keychain APIs and implementations](https://developer.apple.com/documentation/technotes/tn3137-on-mac-keychains)
 - [OWASP Mobile Top 10 (2024)](https://owasp.org/www-project-mobile-top-10/)
 - [OWASP MASVS](https://mas.owasp.org/MASVS/)
