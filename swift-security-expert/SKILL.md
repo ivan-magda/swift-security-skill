@@ -1,3 +1,8 @@
+---
+name: swift-security-expert
+description: Use when working with iOS/macOS Keychain Services (SecItem queries, kSecClass, OSStatus errors), biometric authentication (LAContext, Face ID, Touch ID), CryptoKit (AES-GCM, ChaChaPoly, ECDSA, ECDH, HPKE, ML-KEM), Secure Enclave, secure credential storage (OAuth tokens, API keys), certificate pinning (SecTrust, SPKI), keychain sharing across apps/extensions, migrating secrets from UserDefaults or plists, or OWASP MASVS/MASTG mobile compliance on Apple platforms.
+---
+
 # Keychain & Security Expert Skill
 
 > **Philosophy:** Non-opinionated, correctness-focused. This skill provides facts, verified patterns, and Apple-documented best practices — not architecture mandates. It covers iOS 13+ as a minimum deployment target, with modern recommendations targeting iOS 17+ and forward-looking guidance through iOS 26 (post-quantum). Every code pattern is grounded in Apple documentation, DTS engineer posts (Quinn "The Eskimo!"), WWDC sessions, and OWASP MASTG — never from memory alone.
