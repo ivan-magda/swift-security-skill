@@ -20,7 +20,7 @@ Apple's security primitives (Keychain, CryptoKit, Secure Enclave) are excellent 
 
 **Severity:** CRITICAL | **OWASP:** M9 (Insecure Data Storage) | **Fix effort:** Medium
 
-UserDefaults writes to an unencrypted XML plist at `~/Library/Preferences/{BUNDLE_ID}.plist`. Apple's documentation: "Don't store personal or sensitive information as settings." Readable from unencrypted backups, jailbroken devices (Objection `ios nsuserdefaults get`), and third-party SDKs.
+UserDefaults writes to an unencrypted XML plist at `~/Library/Preferences/{BUNDLE_ID}.plist`. Apple's documentation: "Don't store personal or sensitive information as settings." Readable from unencrypted backups, jailbroken devices (Objection `ios nsuserdefaults get`), and third-party SDKs. **SwiftUI's `@AppStorage` is a wrapper over `UserDefaults`** — it has identical security properties and must never be used for tokens, keys, or credentials.
 
 **❌ Insecure — AI-generated pattern:**
 
