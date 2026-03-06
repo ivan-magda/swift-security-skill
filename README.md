@@ -185,11 +185,13 @@ Ask the agent to build a security feature from scratch. The skill identifies whi
 Contributions are welcome. When adding or editing reference files:
 
 - Every reference file must have an H1 title, a scope blockquote, and a `## Summary Checklist` at the bottom
-- Code examples use correct and incorrect annotations with explanations
-- Prefer `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly` + `SecAccessControl` for new patterns unless a specific scenario demands otherwise
-- Target iOS 17+ for modern patterns; include iOS 13+ fallbacks only when the modern API has no equivalent
+- Code examples use ✅ (correct) and ❌ (incorrect) markers — always provide both for security patterns
+- Cite iOS version requirements for every API (`iOS 13+`, `iOS 17+`, `iOS 26+`)
+- Cross-references use backtick-quoted filenames: `keychain-fundamentals.md`
+- One canonical source per pattern — other files get a one-sentence summary + cross-reference link
 - Cite Apple documentation URLs, WWDC session numbers, or Quinn "The Eskimo!" DTS posts for every non-obvious claim
-- Run the structural validation sweep (naming consistency, checklist consistency, cross-reference validation) before submitting
+
+See [AGENTS.md](AGENTS.md) for full contribution format, testing constraints, and scope boundaries.
 
 ## References & Sources
 
