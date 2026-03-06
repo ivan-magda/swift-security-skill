@@ -254,6 +254,7 @@ struct OAuthTokens: Codable {
 // ✅ CORRECT — ASWebAuthenticationSession + PKCE + Keychain storage
 // Requires: iOS 13.0+ (for prefersEphemeralWebBrowserSession)
 import AuthenticationServices
+import CryptoKit
 
 final class OAuthManager: NSObject, ASWebAuthenticationPresentationContextProviding {
 
@@ -314,7 +315,6 @@ final class OAuthManager: NSObject, ASWebAuthenticationPresentationContextProvid
 
     private func generateCodeChallenge(from verifier: String) -> String {
         // CryptoKit SHA256 (iOS 13.0+) — replaces legacy CC_SHA256
-        import CryptoKit
         let hash = SHA256.hash(data: Data(verifier.utf8))
         return Data(hash).base64EncodedString()
             .replacingOccurrences(of: "+", with: "-")
