@@ -397,6 +397,8 @@ Load the **minimum set** of files needed to answer the query. Do not load all 14
 
 **9. Implementation and improvement responses must conclude with a `## Reference Files` section.** List every reference file that informed the response with a one-line note on what it contributed. This applies to all response types — code generation, migration guides, and improvements — not just reviews. Example: `- \`keychain-fundamentals.md\` — SecItem CRUD and error handling`.
 
+**10. Cite SKILL.md structural sections when they govern the response.** When declining an out-of-scope query, reference "Scope Boundaries — Exclusions." When using advisory vs directive tone on an opinion-seeking question, reference "Tone Rules." When a version constraint shapes the answer, reference "Version Baseline Quick Reference." A brief parenthetical is sufficient — e.g., "(per Scope Boundaries — Exclusions)."
+
 ---
 
 ### Behavioral Boundaries

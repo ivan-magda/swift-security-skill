@@ -352,6 +352,8 @@ let importedPub = try P256.Signing.PublicKey(derRepresentation: publicDER)
 
 NIST curve keys (P-256/P-384/P-521) can be stored as `kSecClassKey` items in the keychain via their `SecKey` bridge. Curve25519 keys and Secure Enclave key blobs must be stored as `kSecClassGenericPassword` items using their `rawRepresentation` / `dataRepresentation`. Apple recommends implementing a `GenericPasswordConvertible` protocol for standardized conversion — see `credential-storage-patterns.md` for the full pattern.
 
+**Peer / recipient public keys** received from a server or counterpart (for ECDH, HPKE, or signature verification) must also be persisted in the keychain — never in UserDefaults, plain files, or hardcoded in source. For NIST curves, store them as `kSecClassKey` with `kSecAttrKeyClass: kSecAttrKeyClassPublic`. For Curve25519 and post-quantum public keys, store the `rawRepresentation` as a `kSecClassGenericPassword` item. Use `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` for accessibility, and assign a distinct `kSecAttrApplicationTag` or `kSecAttrAccount` value (e.g., a `"peer-"` prefix) to separate received peer keys from your own key pairs. See `credential-storage-patterns.md` for the add-or-update pattern.
+
 ---
 
 ## Secure Enclave Integration (Brief — See `secure-enclave.md`)
@@ -500,3 +502,4 @@ For new development today: default to Curve25519 for software keys and P256 for 
 1. **Post-quantum code gated behind `#available(iOS 26, *)`** — ML-KEM, ML-DSA, X-Wing require iOS 26+; HPKE requires iOS 17+
 1. **Secure Enclave key lifecycle accounts for device migration** — SE keys are device-bound; implement rotation/recovery for backup restore scenarios
 1. **Hybrid PQC strategy planned** — X-Wing HPKE for key exchange, ML-DSA + ECDSA dual signatures for signing during the transition period
+1. **Peer/recipient public keys stored in keychain** — received public keys for ECDH, HPKE, or verification persisted in keychain with `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` and distinct tags; not in UserDefaults or files
