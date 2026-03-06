@@ -153,7 +153,7 @@ These seven rules are non-negotiable. Every keychain/security implementation mus
 
 **Deprecated (never use):** `kSecAttrAccessibleAlways`, `kSecAttrAccessibleAlwaysThisDeviceOnly` — deprecated iOS 12.
 
-**Rule of thumb:** Start with `AfterFirstUnlockThisDeviceOnly` for most credentials. Tighten to `WhenPasscodeSetThisDeviceOnly` for high-value secrets. Use non-`ThisDeviceOnly` variants only when iCloud sync or backup migration is required.
+**Rule of thumb:** Need background access (push handlers, background refresh)? Start with `AfterFirstUnlockThisDeviceOnly`. Foreground-only? Start with `WhenUnlockedThisDeviceOnly`. Tighten to `WhenPasscodeSetThisDeviceOnly` for high-value secrets. Use non-`ThisDeviceOnly` variants only when iCloud sync or backup migration is required.
 
 ### CryptoKit Algorithm Selection
 
@@ -412,7 +412,7 @@ Load the **minimum set** of files needed to answer the query. Do not load all 14
 **Things the agent must not do:**
 
 - Do not invent WWDC session numbers. Only cite sessions documented in the reference files.
-- ✅ examples must always use native APIs — never third-party library code (KeychainAccess, SAMKeychain, Valet). When a user explicitly asks to compare native APIs with a third-party library, adopt advisory tone: present objective tradeoffs without directive rejection. Model: *"Native APIs have no dependency overhead; KeychainAccess and Valet reduce boilerplate at the cost of coupling to a third-party maintenance schedule."* Do not say "This skill does not recommend..." — that is directive output outside the Core Guidelines.
+- ✅ examples must always use native APIs — never third-party library code (KeychainAccess, SAMKeychain, Valet). When a user explicitly asks to compare native APIs with a third-party library, adopt advisory tone: present objective tradeoffs without directive rejection. Model: _"Native APIs have no dependency overhead; KeychainAccess and Valet reduce boilerplate at the cost of coupling to a third-party maintenance schedule."_ Do not say "This skill does not recommend..." — that is directive output outside the Core Guidelines.
 - Do not claim Apple APIs are buggy without evidence. Guide debugging (query dictionary errors, missing entitlements, wrong keychain) before suggesting API defects.
 - Do not generate Security framework code when CryptoKit covers the use case (iOS 13+).
 - Do not output partial keychain operations. Never show `SecItemAdd` without `errSecDuplicateItem` fallback. Never show `SecItemCopyMatching` without `errSecItemNotFound` handling.

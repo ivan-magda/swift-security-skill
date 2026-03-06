@@ -432,12 +432,13 @@ iOS 15+ pre-warming and background execution (push notifications, background fet
 
 > For the complete accessibility constant selection matrix with data protection tiers and security trade-offs, see `keychain-access-control.md` § The "When" Layer: Seven Accessibility Constants. The table below summarizes the four constants most relevant to background migration scenarios.
 
-| Accessibility constant                            | Available when locked | Background safe | Notes                              |
-| ------------------------------------------------- | --------------------- | --------------- | ---------------------------------- |
-| `kSecAttrAccessibleWhenUnlocked` (default)        | No                    | No              | Foreground only                    |
-| `kSecAttrAccessibleAfterFirstUnlock`              | After first unlock    | Yes             | Best for most migrated credentials |
-| `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly` | No                    | No              | Biometric-gated items              |
-| `kSecAttrAccessibleAlways`                        | Yes                   | Yes             | **Deprecated iOS 12** — do not use |
+| Accessibility constant                             | Available when locked | Background safe | Notes                                                |
+| -------------------------------------------------- | --------------------- | --------------- | ---------------------------------------------------- |
+| `kSecAttrAccessibleWhenUnlocked` (default)         | No                    | No              | Foreground only                                      |
+| `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` | After first unlock    | Yes             | **Recommended** — background + device-bound          |
+| `kSecAttrAccessibleAfterFirstUnlock`               | After first unlock    | Yes             | Background + backup migration (use only when needed) |
+| `kSecAttrAccessibleWhenPasscodeSetThisDeviceOnly`  | No                    | No              | Biometric-gated items                                |
+| `kSecAttrAccessibleAlways`                         | Yes                   | Yes             | **Deprecated iOS 12** — do not use                   |
 
 **Recommended default for migrated credentials:** `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` — background-safe, not synced to iCloud, not included in backups. Apple uses `AfterFirstUnlock` for Wi-Fi passwords and mail account credentials.
 

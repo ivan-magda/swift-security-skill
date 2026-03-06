@@ -107,7 +107,7 @@ let addQuery: [String: Any] = [
     kSecAttrService as String:      "com.example.authService",
     kSecAttrAccount as String:      "user@example.com",
     kSecAttrAccessGroup as String:  accessGroup,
-    kSecAttrAccessible as String:   kSecAttrAccessibleAfterFirstUnlock,
+    kSecAttrAccessible as String:   kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly,
     kSecValueData as String:        password
 ]
 
