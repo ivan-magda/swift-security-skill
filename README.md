@@ -1,21 +1,21 @@
-# Keychain & Security Expert Skill
+# Swift Security Expert
 
-[![License](https://img.shields.io/github/license/ivan-magda/swift-security-skill)](LICENSE)
+Agent skill for Apple platform security work in Swift. It covers Keychain Services, biometric access control, CryptoKit, Secure Enclave, certificate trust, and secure credential storage on iOS and macOS.
 
-Expert guidance for any AI coding tool that supports the [Agent Skills open format](https://agentskills.io/home) — Apple Keychain Services, biometric authentication, CryptoKit cryptography, credential lifecycle management, certificate trust, and OWASP compliance mapping for iOS/macOS (iOS 13–26+).
+The point is simple: AI tools are often shaky on security code, especially around Keychain, biometrics, and cryptography. This repo gives them better defaults, sharper review guidance, and Apple-specific implementation patterns.
 
-This repository distills verified Apple platform security practices into actionable, correctness-focused references for AI agents and code review workflows. Every code pattern is grounded in Apple documentation, DTS engineer guidance (Quinn "The Eskimo!"), WWDC sessions, and OWASP MASTG.
+The guidance is based on Apple documentation, DTS engineer guidance, WWDC sessions, and OWASP MASTG.
 
-## Who This Is For
+## Best For
 
-- Teams writing or reviewing keychain and security code who want correct defaults — not dangerous AI-generated patterns
-- Developers implementing biometric authentication, token storage, or cryptographic operations
-- Anyone migrating from `UserDefaults`/`NSCoding` secrets to proper Keychain storage
-- Security auditors mapping iOS implementations to OWASP Mobile Top 10 / MASVS
+- Reviewing Swift security code for storage, auth, and crypto mistakes
+- Implementing Keychain, biometrics, Secure Enclave, and CryptoKit correctly
+- Moving secrets out of `UserDefaults`, plists, or legacy storage
+- Mapping Apple-platform code to OWASP Mobile Top 10 / MASVS checks
 
 ## Why This Skill Exists
 
-AI coding assistants routinely generate **dangerous security code**. This skill exists to catch and correct these patterns before they ship.
+AI coding assistants routinely generate dangerous Apple security code. This skill exists to catch those patterns and replace them with safer ones.
 
 ## How to Use This Skill
 
@@ -76,36 +76,35 @@ Upload the `swift-security-expert/` folder contents to a Claude Project's knowle
 - **Claude:** [Using Skills](https://platform.claude.com/docs/en/agents-and-tools/agent-skills/overview#using-skills)
 - **Cursor:** [Enabling Skills](https://cursor.com/docs/context/skills#enabling-skills)
 
-**How to verify:** Your agent should reference the decision tree in `SKILL.md` and load the relevant reference file(s) for your task.
+**How to verify:** Your agent should use `SKILL.md` as the router and load the relevant reference files for the task.
 
-## What This Skill Offers
+## What This Skill Covers
 
-### Catch Dangerous AI-Generated Patterns
+### Review
 
-- Detect `LAContext.evaluatePolicy()` used alone as an authentication gate (bypassable via Frida/objection)
-- Flag secrets stored in `UserDefaults`, property lists, or hardcoded in source
-- Identify ignored `OSStatus` errors that silently fail keychain operations
-- Catch wrong `kSecAttrAccessible` values that expose data at rest
+- Catch `LAContext.evaluatePolicy()` used as a standalone auth gate
+- Flag secrets stored in `UserDefaults`, property lists, or source
+- Catch ignored `OSStatus` failures and weak `kSecAttrAccessible` choices
 
-### Guide Security Decisions
+### Build
 
-- Choose between `.biometryCurrentSet`, `.biometryAny`, and `.userPresence` for biometric gating
-- Select the correct `kSecAttrAccessible` level for background vs foreground access
-- Pick AES-GCM vs ChaChaPoly, P256 vs Curve25519, and when to use post-quantum algorithms (iOS 26+)
-- Decide between Keychain Sharing entitlements vs App Groups for cross-app credential sharing
+- Implement keychain-backed biometrics with `SecAccessControl`
+- Use correct `SecItemAdd` / `SecItemCopyMatching` add-or-update flows
+- Generate and use Secure Enclave keys without simulator mistakes
+- Store and rotate OAuth tokens safely
 
-### Write Correct Security Code
+### Decide
 
-- Hardware-bound biometric authentication via `SecAccessControl` + Keychain (not `LAContext` alone)
-- Proper `SecItemAdd` / `SecItemCopyMatching` with add-or-update patterns and `errSecDuplicateItem` handling
-- Secure Enclave key generation with correct availability checks (not the simulator trap)
-- OAuth token lifecycle with refresh rotation and secure keychain storage
+- Choose between `.biometryCurrentSet`, `.biometryAny`, and `.userPresence`
+- Pick the right accessibility class for foreground vs background access
+- Choose between AES-GCM and ChaChaPoly, P256 and Curve25519, and newer post-quantum options on iOS 26+
+- Decide between Keychain Sharing and App Groups for shared credentials
 
-### Support Compliance Workflows
+### Audit
 
-- Map implementations directly to OWASP Mobile Top 10 (2024) categories
-- Verify alignment with MASVS controls and MASTG test cases
-- Generate audit-ready compliance documentation
+- Map findings to OWASP Mobile Top 10 (2024)
+- Check MASVS / MASTG alignment
+- Produce audit-ready notes for reviews
 
 ## Coverage
 
@@ -128,59 +127,32 @@ Upload the `swift-security-expert/` folder contents to a Claude Project's knowle
 
 ### Risk Level Legend
 
-- **CRITICAL** — AI-generated mistakes directly cause data breaches or authentication bypasses
-- **HIGH** — Incorrect implementation compromises security posture or causes cryptographic failures
-- **MEDIUM** — Practical importance for code quality and auditability; errors cause functional bugs or compliance gaps
+- **CRITICAL** — mistakes that can lead to data exposure or auth bypass
+- **HIGH** — mistakes that weaken security or break cryptographic correctness
+- **MEDIUM** — mistakes that hurt reliability, testing, or auditability
 
 ## What Makes This Skill Different
 
-**Correctness over coverage.** Every reference file contains paired correct and incorrect code examples with explanations of _why_ the wrong pattern fails — not just what the right pattern looks like. This is specifically designed to counteract the dangerous security patterns dominant in AI training data.
-
-**Non-opinionated.** Focuses on Apple-documented facts and best practices, not architecture mandates. Uses "prefer" and "consider" — not "always" and "never" — except where security correctness demands it.
-
-## Skill Structure
-
-```
-AGENTS.md                              ← repo-level AI agent onboarding
-README.md                              ← you are here
-LICENSE
-.claude-plugin/
-  plugin.json                          ← Claude Code plugin manifest
-  marketplace.json                     ← Claude Code marketplace catalog
-swift-security-expert/
-  SKILL.md                             ← the skill: decision tree router, guidelines, behavioral rules
-  references/
-    keychain-fundamentals.md           ← SecItem* CRUD, query dictionaries, OSStatus
-    keychain-item-classes.md           ← kSecClass types, composite primary keys
-    keychain-access-control.md         ← accessibility constants, SecAccessControl
-    biometric-authentication.md        ← keychain-bound biometrics, LAContext bypass
-    secure-enclave.md                  ← hardware-backed P256, simulator traps
-    cryptokit-symmetric.md             ← SHA-2/3, HMAC, AES-GCM, ChaChaPoly, HKDF
-    cryptokit-public-key.md            ← ECDSA, ECDH, HPKE, ML-KEM/ML-DSA
-    credential-storage-patterns.md     ← OAuth tokens, API keys, refresh rotation
-    keychain-sharing.md                ← access groups, Team ID, extensions
-    certificate-trust.md               ← SecTrust, SPKI pinning, mTLS
-    migration-legacy-stores.md         ← UserDefaults/plist → Keychain migration
-    common-anti-patterns.md            ← top 10 AI-generated security mistakes
-    testing-security-code.md           ← protocol mocks, CI/CD, Swift Testing
-    compliance-owasp-mapping.md        ← OWASP Mobile Top 10, MASVS, MASTG
-```
+- **Correctness over coverage.** Reference files include correct and incorrect examples, plus why the wrong pattern fails.
+- **Apple-specific.** Focuses on Apple APIs and Apple-platform failure modes, not generic security advice.
+- **Non-opinionated.** Stays close to documented Apple behavior and verified patterns rather than pushing one architecture.
+- **Practical.** Built for review, fixes, and implementation work — not just reference reading.
 
 ## How It Works
 
-`SKILL.md` acts as a decision tree router. Based on what you're doing — **reviewing** code, **improving** existing implementations, or **building** something new — it routes the agent to the relevant reference documents. Each reference is self-contained with correct/incorrect Swift code examples and a summary checklist.
+`SKILL.md` is a router. It looks at the task — **review**, **improve**, or **implement** — then pulls in the right reference files.
 
-### Review Workflow
+### Review
 
-Ask the agent to audit existing code. The skill runs the top-level review checklist (11 items covering biometric bypass, credential exposure, access control, crypto correctness, and more), flags each item as pass/fail/warning, and cites the specific reference file and section for each finding.
+Use it to audit existing code. The skill runs the review checklist, flags findings as pass/fail/warning, and points to the exact reference file and section behind each call.
 
-### Improve Workflow
+### Improve
 
-Ask the agent to modernize or fix existing code. The skill identifies gaps (legacy storage, wrong API, missing auth), loads the relevant migration + domain-specific reference files, and applies the correct patterns while verifying with domain checklists.
+Use it to fix or modernize existing code. The skill identifies the gap, loads the relevant migration and domain references, then applies the safer pattern.
 
-### Implement Workflow
+### Implement
 
-Ask the agent to build a security feature from scratch. The skill identifies which domains apply, loads those reference files, and follows the correct patterns with proper error handling and access control from the start.
+Use it to build a security feature from scratch. The skill selects the relevant domains and follows the correct patterns from the start.
 
 ## Contributing
 
@@ -209,4 +181,4 @@ See [AGENTS.md](AGENTS.md) for full contribution format, testing constraints, an
 
 ## License
 
-This skill is open-source and available under the MIT License. See [LICENSE](LICENSE) for details.
+MIT
